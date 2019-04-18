@@ -67,17 +67,18 @@ TGCompositeFrame* UiHelper::getParentFrame(TGFrame* frame){
 
 TGCompositeFrame* UiHelper::getFirstChildFrame(TGCompositeFrame* frame){
 	TList* childFrames = frame->GetList();
+	if (childFrames->GetSize() == 0) return nullptr;
+
 	TObject* obj = childFrames->At(0);
-	if (TGCompositeFrame* childFrame = dynamic_cast<TGCompositeFrame*>(obj)){
-		return childFrame;
-	}
-	return nullptr;
+	TGFrameElement* firstFrameElement = dynamic_cast<TGFrameElement*>(obj);
+	TGFrame* firstFrame = firstFrameElement->fFrame;
+	TGCompositeFrame* firstCompositeFrame = dynamic_cast<TGCompositeFrame*>(firstFrame);
+	return firstCompositeFrame;
 }
 
 void UiHelper::removeFrame(TGCompositeFrame* &frame){
 	// https://root-forum.cern.ch/t/how-to-remove-a-button-from-a-gui/21365/3
 	if (!frame) return;
-
 	TGCompositeFrame* parentFrame = getParentFrame(frame);
 	parentFrame->RemoveFrame(frame);
 	frame->UnmapWindow();

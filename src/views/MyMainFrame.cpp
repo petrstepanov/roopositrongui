@@ -25,8 +25,6 @@
 #include "project/ProjectView.h"
 
 MyMainFrame::MyMainFrame() : TGMainFrame(gClient->GetRoot(), Constants::windowWidth, Constants::windowHeight) {
-	projectView = nullptr;
-
 	SetIconPixmap(Images::applicationIcon);
 	SetWindowName(Constants::applicationName);
 	SetCleanup(kDeepCleanup);
@@ -88,24 +86,23 @@ void MyMainFrame::exit(){
 // Slots for Model Signals
 void MyMainFrame::handleProjectCreated(){
 	Debug("MyMainFrame::handleProjectCreated");
-	// Create new Project view when new Project was created
-	if (projectView != nullptr){
-		UiHelper::removeFrame(projectView);
-	}
-    projectView = new ProjectView(projectContainer);
-    projectContainer->AddFrame(projectView, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY));
+	// Remove current ProjectView if any
+	TGCompositeFrame* projectView = UiHelper::getFirstChildFrame(projectContainer);
+ 	UiHelper::removeFrame(projectView);
+
+    ProjectView* newProjectView = new ProjectView(projectContainer);
+    projectContainer->AddFrame(newProjectView, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY));
     projectContainer->MapSubwindows();
     projectContainer->Layout();
 }
 
 void MyMainFrame::handleProjectClosed(){
 	Debug("MyMainFrame::handleProjectClosed");
-	projectContainer->GetList()->Print();
 	// Remove Project view when new Project closed
-	if (projectView != nullptr){
-		UiHelper::removeFrame(projectView);
-	}
-	projectContainer->GetList()->Print();
-	projectContainer->MapSubwindows();
+	// Remove current ProjectView if any
+	TGCompositeFrame* projectView = UiHelper::getFirstChildFrame(projectContainer);
+ 	UiHelper::removeFrame(projectView);
+
+ 	projectContainer->MapSubwindows();
     projectContainer->Layout();
 }

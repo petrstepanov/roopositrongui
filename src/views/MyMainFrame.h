@@ -34,7 +34,6 @@ public:
 
 private:
     TGCompositeFrame* projectContainer;
-    TGCompositeFrame* projectView;
 };
 
 #endif /* MyMainFrameW_H */
