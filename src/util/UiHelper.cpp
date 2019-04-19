@@ -15,6 +15,9 @@
 #include <TList.h>
 #include <TGMsgBox.h>
 #include <TGFileDialog.h>
+#include <TGClient.h>
+#include <TColor.h>
+#include <TGFrame.h>
 #include "../resources/Constants.h"
 #include <iostream>
 
@@ -86,3 +89,13 @@ void UiHelper::removeFrame(TGCompositeFrame* &frame){
 	delete frame;
 	frame = 0;
 }
+
+void UiHelper::setDarkBackground(TGFrame* frame){
+    // frame->SetBackgroundColor(gClient->GetShadow(TGFrame::GetDefaultFrameBackground()));
+	frame->SetBackgroundColor(TColor::Number2Pixel(kGray+1));
+}
+
+void UiHelper::setLightBackground(TGFrame* frame){
+	frame->SetBackgroundColor(TColor::Number2Pixel(kWhite));
+}
+

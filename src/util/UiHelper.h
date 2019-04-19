@@ -28,7 +28,8 @@ public:
     void setMainFrame(TGWindow* window);
     static TGCompositeFrame* getParentFrame(TGFrame* frame);
     static TGCompositeFrame* getFirstChildFrame(TGCompositeFrame* frame);
-
+    static void setDarkBackground(TGFrame* frame);
+    static void setLightBackground(TGFrame* frame);
     static void removeFrame(TGCompositeFrame* &frame);
 
 

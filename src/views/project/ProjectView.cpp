@@ -7,7 +7,9 @@
 
 #include "ProjectView.h"
 #include "ProjectPresenter.h"
-#include "./../../resources/Constants.h"
+#include "../../resources/Constants.h"
+#include "../files/FilesView.h"
+#include "../../util/UiHelper.h"
 
 ProjectView::ProjectView(const TGWindow *w) : AbstractView<ProjectPresenter>(w){
 	// Instantinate presenter
@@ -26,7 +28,7 @@ ProjectPresenter* ProjectView::instantinatePresenter(){
 
 void ProjectView::initUI(){
 	SetLayoutManager(new TGVerticalLayout(this));
-	SetBackgroundColor(fClient->GetShadow(GetDefaultFrameBackground()));
+	UiHelper::setDarkBackground(this);
 
 	// Splitter
 	TGHorizontalFrame* projectHorizontalFrame = new TGHorizontalFrame(this);
@@ -45,7 +47,6 @@ void ProjectView::initUI(){
 	// Shutter (accordion)
     TGShutter *shutter = new TGShutter(leftVerticalFrame);
     TGShutterItem *spectraShutterItem = new TGShutterItem(shutter, new TGHotString("SPECTRA"), 1000, kVerticalFrame);
-    // TGCompositeFrame *frame = (TGCompositeFrame *)filesShutterItem->GetContainer();
     shutter->AddItem(spectraShutterItem);
     shutter->SetSelectedItem(spectraShutterItem);
     TGShutterItem *modelShutterItem = new TGShutterItem(shutter, new TGHotString("MODEL"), 1001, kVerticalFrame);
@@ -54,6 +55,23 @@ void ProjectView::initUI(){
     shutter->AddItem(fittingShutterItem);
 //    shutter->SetWidth(Constants::leftPanelWidth);
     leftVerticalFrame->AddFrame(shutter, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY));
+
+    // Data files tab
+    TGCompositeFrame *tab = (TGCompositeFrame *)spectraShutterItem->GetContainer();
+//    tab->ChangeOptions(tab->GetOptions() | kFixedHeight);
+//    tab->SetHeight(300);
+    UiHelper::setDarkBackground(tab);
+    FilesView* filesView = new FilesView(tab);
+    tab->AddFrame(filesView, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY, Padding::dx, Padding::dx, Padding::dy, Padding::dy));
+
+    // Model tab
+    // ...
+
+    // Fitting tab
+    // ...
+
+    TGCanvas leftCanvas = new TGCanvas(this);
+
 
     AddFrame(projectHorizontalFrame, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY));
     righterticalFrame->SetBackgroundColor(fClient->GetShadow(GetDefaultFrameBackground()));
