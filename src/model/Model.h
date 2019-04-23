@@ -18,7 +18,6 @@ public:
 	static Model* getInstance();
 
 	// Objects saved and read to hard drive
-	ProjectModel* projectModel;
 
 	void newProject();
 	Bool_t saveProjectToFile(TString* filename);
@@ -28,16 +27,23 @@ public:
     void projectCreated(); // *SIGNAL*
     void projectClosed(); // *SIGNAL*
     void projectSaved(TString* filename); // *SIGNAL*
+    void spectraDeleted(); // *SIGNAL*
+
 
     // Getters
     TString* getProjectFilename();
     Bool_t isProjectModifiedAfterSave();
+    ProjectModel* getProjectModel();
+
+    TObjArray* getSpectra();
+    void deleteSpectra();
 
 private:
 	Model();
 	virtual ~Model();
 
 	static Model* instance;
+	ProjectModel* projectModel;
 
 	// Objects stored in memory but not saved to disk
 	TString* projectFilename;

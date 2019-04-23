@@ -8,7 +8,12 @@
 #ifndef SRC_MODEL_BRANCHES_SPECTRUM_H_
 #define SRC_MODEL_BRANCHES_SPECTRUM_H_
 
-class Spectrum : public TObject{
+#include <TObject.h>
+#include <TH1F.h>
+#include <RooDataHist.h>
+
+class Spectrum : public TObject {
+
 private:
 	TString filename;
 	TH1F* histogram;              // ROOT histogram

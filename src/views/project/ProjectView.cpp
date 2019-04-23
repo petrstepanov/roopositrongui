@@ -58,20 +58,19 @@ void ProjectView::initUI(){
 
     // Data files tab
     TGCompositeFrame *tab = (TGCompositeFrame *)spectraShutterItem->GetContainer();
-//    tab->ChangeOptions(tab->GetOptions() | kFixedHeight);
-//    tab->SetHeight(300);
-    UiHelper::setDarkBackground(tab);
+    UiHelper::setLightBackground(tab);
     FilesView* filesView = new FilesView(tab);
     tab->AddFrame(filesView, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY, Padding::dx, Padding::dx, Padding::dy, Padding::dy));
+
+    //    TGCompositeFrame* child = new TGCompositeFrame(tab);
+//    child->SetBackgroundColor(TColor::Number2Pixel(kBlue));
+//    tab->AddFrame(child, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY, 30, 30, 30, 30));
 
     // Model tab
     // ...
 
     // Fitting tab
     // ...
-
-    TGCanvas leftCanvas = new TGCanvas(this);
-
 
     AddFrame(projectHorizontalFrame, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY));
     righterticalFrame->SetBackgroundColor(fClient->GetShadow(GetDefaultFrameBackground()));

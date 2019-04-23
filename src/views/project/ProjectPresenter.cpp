@@ -20,7 +20,7 @@ ProjectPresenter::ProjectPresenter(ProjectView* view) : AbstractPresenter<Projec
 ProjectPresenter::~ProjectPresenter(){}
 
 ProjectModel* ProjectPresenter::instantinateModel() {
-	return Model::getInstance()->projectModel;
+	return Model::getInstance()->getProjectModel();
 }
 
 // Slots from Model

@@ -26,17 +26,19 @@ public:
     int showOkDialog(const char* message);
     TGFileInfo* getFileFromDialog(const char* fileDescription, const char* fileExtension);
     void setMainFrame(TGWindow* window);
+    const TGWindow* getMainFrame();
+
     static TGCompositeFrame* getParentFrame(TGFrame* frame);
     static TGCompositeFrame* getFirstChildFrame(TGCompositeFrame* frame);
     static void setDarkBackground(TGFrame* frame);
     static void setLightBackground(TGFrame* frame);
     static void removeFrame(TGCompositeFrame* &frame);
-
+    static void setSolidBorder(TGFrame* frame);
 
 private:
     UiHelper();
     static UiHelper* instance;
-    TGWindow* mainFrame = nullptr;
+    const TGWindow* mainFrame = nullptr;
 };
 
 #endif /* UIHELPER_H */

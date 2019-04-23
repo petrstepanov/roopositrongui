@@ -17,12 +17,10 @@ public:
 	ProjectModel();
 	virtual ~ProjectModel();
 
-private:
 	Double_t channelWidth;
-	Int_t skipLinesSpectrum;
-	Int_t maxSpectrumChannel;
-	Int_t minTrimChannel;
-	Int_t maxTrimChannel;
+	Int_t skipLines;
+	Int_t readLines;
+//	Int_t maxSpectrumChannel;
 	TObjArray* spectra;
 
 	ClassDef(ProjectModel, 1)

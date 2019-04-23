@@ -71,6 +71,7 @@ void MyMainFrame::show(){
 	// Set minimum and maximum window size for window manager
 	SetWMSizeHints(Constants::windowWidth, Constants::windowHeight, 1E4, 1E4, 1, 1);
 	MapSubwindows();
+	Layout();
 	// Issue - GetDefaultSize() returns zeros on Ubuntu 18.04.
     Resize(Constants::windowWidth, Constants::windowHeight);
     // Maps the window "id" and all of its subwindows that have had map requests on the screen and put this window on the top of of the stack of all windows

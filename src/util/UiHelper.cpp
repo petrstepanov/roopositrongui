@@ -54,6 +54,10 @@ void UiHelper::setMainFrame(TGWindow* w) {
     mainFrame = w;
 }
 
+const TGWindow* UiHelper::getMainFrame() {
+    return mainFrame;
+}
+
 UiHelper* UiHelper::getInstance() {
     if (!instance){
         instance = new UiHelper();
@@ -99,3 +103,7 @@ void UiHelper::setLightBackground(TGFrame* frame){
 	frame->SetBackgroundColor(TColor::Number2Pixel(kWhite));
 }
 
+void UiHelper::setSolidBorder(TGFrame* frame){
+	frame->ChangeOptions(frame->GetOptions() | kDoubleBorder);
+	frame->SetBackgroundColor(gClient->GetShadow(TGFrame::GetDefaultFrameBackground()));
+}

@@ -27,6 +27,11 @@ public:
     // Slots from the view
     void onAddFilesClicked();
     void onRemoveFilesClicked();
+    void onImportSpectraClicked();
+
+    // Slots from the Model
+    void handleSpectraDeleted();
+
 };
 
 #endif /* SRC_VIEWS_FILES_FILESPRESENTER_H_ */

@@ -28,6 +28,7 @@ Model* Model::getInstance(){
 
 void Model::newProject(){
 	Debug("Model::newProject");
+	projectModel = new ProjectModel();
 	projectCreated();
 }
 
@@ -47,6 +48,11 @@ void Model::closeProject(){
 	projectClosed();
 }
 
+void Model::deleteSpectra(){
+	getProjectModel()->spectra->Delete();
+	spectraDeleted();
+}
+
 // Signals
 void Model::projectCreated(){
 	Emit("projectCreated()");
@@ -60,6 +66,10 @@ void Model::projectSaved(TString* filename){
 	Emit("projectSaved(TString*)");
 }
 
+void Model::spectraDeleted(){
+	Emit("spectraDeleted()");
+}
+
 // Setters and getters
 TString* Model::getProjectFilename(){
 	return projectFilename;
@@ -68,3 +78,14 @@ TString* Model::getProjectFilename(){
 Bool_t Model::isProjectModifiedAfterSave(){
 	return isProjectModifiedAfterSave();
 };
+
+ProjectModel* Model::getProjectModel(){
+	return projectModel;
+}
+
+TObjArray* Model::getSpectra(){
+	return getProjectModel()->spectra;
+}
+
+
+//

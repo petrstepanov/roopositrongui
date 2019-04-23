@@ -9,10 +9,10 @@
 
 ProjectModel::ProjectModel() {
 	channelWidth = 0.006186;
-	skipLinesSpectrum = 12;
-	maxSpectrumChannel = 8192;
-	minTrimChannel = 1;
-	maxTrimChannel = 8192;
+	skipLines = 12;
+	readLines = 8192;
+//	minTrimChannel = 1;
+//	maxTrimChannel = 8192;
 	spectra = new TObjArray();
 }
 
