@@ -31,9 +31,11 @@ public:
     static TGCompositeFrame* getParentFrame(TGFrame* frame);
     static TGCompositeFrame* getFirstChildFrame(TGCompositeFrame* frame);
     static void setDarkBackground(TGFrame* frame);
+    static void setDarkerBackground(TGFrame* frame);
     static void setLightBackground(TGFrame* frame);
     static void removeFrame(TGCompositeFrame* &frame);
-    static void setSolidBorder(TGFrame* frame);
+//    static void setSolidBorder(TGFrame* frame);
+    static void setHeight(TGFrame* frame, int height);
 
 private:
     UiHelper();

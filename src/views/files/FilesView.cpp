@@ -7,10 +7,10 @@
 
 #include "FilesView.h"
 #include "FilesPresenter.h"
-#include "TGLabel.h"
-#include "TGListBox.h"
-#include "TGNumberEntry.h"
-#include "TColor.h"
+#include <TGLabel.h>
+#include <TGListBox.h>
+#include <TGNumberEntry.h>
+#include <TColor.h>
 #include "../../util/UiHelper.h"
 #include "../../util/Debug.h"
 
@@ -34,22 +34,18 @@ FilesPresenter* FilesView::instantinatePresenter() {
 
 void FilesView::initUI() {
 	SetLayoutManager(new TGVerticalLayout(this));
-	UiHelper::setLightBackground(this);
+	UiHelper::setDarkBackground(this);
 
 	// Files list box
 	TGLabel* filesNumberLabel = new TGLabel(this, "No files loaded");
 	// filesNumberLabel->SetTextJustify(kTextLeft);
-	UiHelper::setLightBackground(filesNumberLabel);
+	UiHelper::setDarkBackground(filesNumberLabel);
+	UiHelper::setDarkBackground(filesNumberLabel);
 	AddFrame(filesNumberLabel, new TGLayoutHints(kLHintsNormal, 0, 0, Padding::dy, Padding::dy));
 	filesListBox = new TGListBox(this);
-	UiHelper::setSolidBorder(filesListBox);
+	// UiHelper::setSolidBorder(filesListBox);
 
-	filesListBox->AddEntry("file1",0);
-	filesListBox->AddEntry("file2",1);
-	filesListBox->AddEntry("file3",2);
-//	filesListBox->AddEntry("/home/petrstepanov/pCloudDrive/LifetimeSpectroscopy/Data/2018-12-25-SrTiO3-single_crystal_50ns_2.49kV_CF1_25'55_25cm_2m_6_kHz__CF2_15'22_24cm_5m_20_kHz_MCA_45cps/2018-12-25-STO-single_crystal_50ns_2.49kV_CF1_25'55_25cm_2m_6_kHz__CF2_15'22_24cm_5m_20_kHz_MCA_45cps.Spe",0);
-//	filesListBox->AddEntry("/home/petrstepanov/pCloudDrive/LifetimeSpectroscopy/Data/2018-12-25-SrTiO3-single_crystal_50ns_2.49kV_CF1_25'55_25cm_2m_6_kHz__CF2_15'22_24cm_5m_20_kHz_MCA_45cps/2019-01-28-STO-single_crystal_50ns_2.49kV_CF1_25'55_25cm_2m_9_kHz__CF2_15'22_24cm_5m_16_kHz_MCA_50cps.Spe",1);
-//	filesListBox->AddEntry("/home/petrstepanov/pCloudDrive/LifetimeSpectroscopy/Data/2018-12-25-SrTiO3-single_crystal_50ns_2.49kV_CF1_25'55_25cm_2m_6_kHz__CF2_15'22_24cm_5m_20_kHz_MCA_45cps/2019-02-03-STO-single_crystal_50ns_2.49kV_CF1_25'55_25cm_2m_9_kHz__CF2_15'22_24cm_5m_16_kHz_MCA_50cps.Spe",2);
+//	filesListBox->AddEntry("file1",0);
 	AddFrame(filesListBox, new TGLayoutHints(kLHintsNormal | kFitWidth | kLHintsExpandY, 0, 0, Padding::dy, 0));
 
 	// Files list buttons
@@ -60,13 +56,13 @@ void FilesView::initUI() {
 	horizohtalFrame->AddFrame(removeFilesButton, new TGLayoutHints(kLHintsNormal | kLHintsExpandX, Padding::dx / 2, 0, 0, 0));
 	removeFilesButton->SetEnabled(kFALSE);
 	AddFrame(horizohtalFrame, new TGLayoutHints(kLHintsNormal | kLHintsExpandX, 0, 0, Padding::dy, Padding::dy));
-	UiHelper::setLightBackground(horizohtalFrame);
+	UiHelper::setDarkBackground(horizohtalFrame);
 
 	// Skip header lines
 	TGCompositeFrame* skipLinesFrame = new TGHorizontalFrame(this);
-	UiHelper::setLightBackground(skipLinesFrame);
+	UiHelper::setDarkBackground(skipLinesFrame);
 	TGLabel* skipLinesLabel = new TGLabel(skipLinesFrame, "Skip header lines");
-	UiHelper::setLightBackground(skipLinesLabel);
+	UiHelper::setDarkBackground(skipLinesLabel);
 	TGNumberEntry* skipLinesNumberEntry = new TGNumberEntry(skipLinesFrame, 12, 5, -1, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative,
 			TGNumberFormat::kNELLimitMinMax, 0, 99);
 	skipLinesFrame->AddFrame(skipLinesLabel, new TGLayoutHints(kLHintsLeft | kLHintsCenterY));
@@ -75,9 +71,9 @@ void FilesView::initUI() {
 
 	// Read channels
 	TGCompositeFrame* readChannelsFrame = new TGHorizontalFrame(this);
-	UiHelper::setLightBackground(readChannelsFrame);
+	UiHelper::setDarkBackground(readChannelsFrame);
 	TGLabel* readChannelsLabel = new TGLabel(readChannelsFrame, "Read channels");
-	UiHelper::setLightBackground(readChannelsFrame);
+	UiHelper::setDarkBackground(readChannelsLabel);
 	readChannelsNumberEntry = new TGNumberEntry(readChannelsFrame, 8192, 5, -1, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative,
 			TGNumberFormat::kNELLimitMinMax, 0, 99999);
 	readChannelsFrame->AddFrame(readChannelsLabel, new TGLayoutHints(kLHintsLeft | kLHintsCenterY));
@@ -86,11 +82,11 @@ void FilesView::initUI() {
 
 	// Trim data points
 //	TGCompositeFrame* trimPointsFrame = new TGHorizontalFrame(this);
-//	UiHelper::setLightBackground(trimPointsFrame);
+//	UiHelper::setDarkBackground(trimPointsFrame);
 //	TGLabel* trimPointsLabel = new TGLabel(trimPointsFrame, "Trim data points");
-//	UiHelper::setLightBackground(trimPointsLabel);
+//	UiHelper::setDarkBackground(trimPointsLabel);
 //	TGLabel* dashLabel = new TGLabel(trimPointsFrame, "  -  ");
-//	UiHelper::setLightBackground(dashLabel);
+//	UiHelper::setDarkBackground(dashLabel);
 //	TGNumberEntry* minChannelNumberEntry = new TGNumberEntry(trimPointsFrame, 1, 5, -1, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative,
 //			TGNumberFormat::kNELLimitMinMax, 1, 99999);
 //	TGNumberEntry* maxChannelNumberEntry = new TGNumberEntry(trimPointsFrame, 8192, 5, -1, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative,

@@ -8,7 +8,6 @@
 #include "ProjectView.h"
 #include "ProjectPresenter.h"
 #include "../../resources/Constants.h"
-#include "../files/FilesView.h"
 #include "../../util/UiHelper.h"
 
 ProjectView::ProjectView(const TGWindow *w) : AbstractView<ProjectPresenter>(w){
@@ -35,32 +34,46 @@ void ProjectView::initUI(){
 	TGVerticalFrame* leftVerticalFrame = new TGVerticalFrame(projectHorizontalFrame);
 	leftVerticalFrame->ChangeOptions(leftVerticalFrame->GetOptions() | kFixedWidth);
 	leftVerticalFrame->SetWidth(Constants::leftPanelWidth);
-	TGVerticalFrame* righterticalFrame = new TGVerticalFrame(projectHorizontalFrame);
+	TGVerticalFrame* rightVerticalFrame = new TGVerticalFrame(projectHorizontalFrame);
 	TGVSplitter *splitter = new TGVSplitter(projectHorizontalFrame);
 	splitter->SetWidth(Padding::dx);
 	splitter->SetFrame(leftVerticalFrame, kTRUE);
 
 	projectHorizontalFrame->AddFrame(leftVerticalFrame, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandY));
 	projectHorizontalFrame->AddFrame(splitter, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandY));
-	projectHorizontalFrame->AddFrame(righterticalFrame, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY));
+	projectHorizontalFrame->AddFrame(rightVerticalFrame, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY));
 
 	// Shutter (accordion)
     TGShutter *shutter = new TGShutter(leftVerticalFrame);
-    TGShutterItem *spectraShutterItem = new TGShutterItem(shutter, new TGHotString("SPECTRA"), 1000, kVerticalFrame);
+
+    TGShutterItem *spectraShutterItem = new TGShutterItem(shutter, new TGHotString("  1.  S P E C T R A"), 1000, kVerticalFrame);
+    ((TGTextButton*)spectraShutterItem->GetButton())->SetTextJustify(kTextLeft | kTextCenterY);
+    UiHelper::setHeight(spectraShutterItem->GetButton(), 32);
     shutter->AddItem(spectraShutterItem);
     shutter->SetSelectedItem(spectraShutterItem);
-    TGShutterItem *modelShutterItem = new TGShutterItem(shutter, new TGHotString("MODEL"), 1001, kVerticalFrame);
+
+    TGShutterItem *modelShutterItem = new TGShutterItem(shutter, new TGHotString("  2.  M O D E L"), 1001, kVerticalFrame);
+    ((TGTextButton*)modelShutterItem->GetButton())->SetTextJustify(kTextLeft | kTextCenterY);
+    UiHelper::setHeight(modelShutterItem->GetButton(), 32);
     shutter->AddItem(modelShutterItem);
-    TGShutterItem *fittingShutterItem = new TGShutterItem(shutter, new TGHotString("FITTING"), 1002, kVerticalFrame);
+
+    TGShutterItem *fittingShutterItem = new TGShutterItem(shutter, new TGHotString("  3.  F I T T I N G"), 1002, kVerticalFrame);
+    ((TGTextButton*)fittingShutterItem->GetButton())->SetTextJustify(kTextLeft | kTextCenterY);
+    UiHelper::setHeight(fittingShutterItem->GetButton(), 32);
     shutter->AddItem(fittingShutterItem);
 //    shutter->SetWidth(Constants::leftPanelWidth);
-    leftVerticalFrame->AddFrame(shutter, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY));
+    leftVerticalFrame->AddFrame(shutter, new TGLayoutHints(kLHintsNormal | kLHintsExpandX | kLHintsExpandY, Padding::dx, 0, Padding::dx, Padding::dx));
 
     // Data files tab
-    TGCompositeFrame *tab = (TGCompositeFrame *)spectraShutterItem->GetContainer();
-    UiHelper::setLightBackground(tab);
-    FilesView* filesView = new FilesView(tab);
-    tab->AddFrame(filesView, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY, Padding::dx, Padding::dx, Padding::dy, Padding::dy));
+    TGCompositeFrame *filesContainer = (TGCompositeFrame *)spectraShutterItem->GetContainer();
+    UiHelper::setDarkBackground(filesContainer);
+
+    TGViewPort* filesViewPort = (TGViewPort*)UiHelper::getParentFrame(filesContainer);
+    filesView = new FilesView(filesContainer);
+    filesContainer->AddFrame(filesView, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY, Padding::dx, Padding::dx, Padding::dy, Padding::dy));
+
+    // Handle resize properly
+    filesViewPort->Connect("ProcessedConfigure(Event_t*)", "ProjectView", this, "HandleConfigure(Event_t*)");
 
     //    TGCompositeFrame* child = new TGCompositeFrame(tab);
 //    child->SetBackgroundColor(TColor::Number2Pixel(kBlue));
@@ -73,5 +86,14 @@ void ProjectView::initUI(){
     // ...
 
     AddFrame(projectHorizontalFrame, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY));
-    righterticalFrame->SetBackgroundColor(fClient->GetShadow(GetDefaultFrameBackground()));
+
+    // Plots view
+    PlotsView* plotsView = new PlotsView(rightVerticalFrame);
+    rightVerticalFrame->AddFrame(plotsView, new TGLayoutHints(kLHintsNormal | kLHintsExpandX | kLHintsExpandY, 0, Padding::dx, Padding::dy*2, Padding::dy*2));
+}
+
+// Hack resize Files View
+void ProjectView::HandleConfigure(Event_t *event){
+	filesView->Resize(event->fWidth - Padding::dx*2, event->fHeight - Padding::dy*2);
+	Layout();
 }

@@ -96,14 +96,24 @@ void UiHelper::removeFrame(TGCompositeFrame* &frame){
 
 void UiHelper::setDarkBackground(TGFrame* frame){
     // frame->SetBackgroundColor(gClient->GetShadow(TGFrame::GetDefaultFrameBackground()));
+	frame->SetBackgroundColor(TColor::Number2Pixel(kGray));
+}
+
+void UiHelper::setDarkerBackground(TGFrame* frame){
+    // frame->SetBackgroundColor(gClient->GetShadow(TGFrame::GetDefaultFrameBackground()));
 	frame->SetBackgroundColor(TColor::Number2Pixel(kGray+1));
 }
 
 void UiHelper::setLightBackground(TGFrame* frame){
 	frame->SetBackgroundColor(TColor::Number2Pixel(kWhite));
 }
+//
+//void UiHelper::setSolidBorder(TGFrame* frame){
+//	frame->ChangeOptions(frame->GetOptions() | kDoubleBorder);
+//	frame->SetBackgroundColor(gClient->GetShadow(TGFrame::GetDefaultFrameBackground()));
+//}
 
-void UiHelper::setSolidBorder(TGFrame* frame){
-	frame->ChangeOptions(frame->GetOptions() | kDoubleBorder);
-	frame->SetBackgroundColor(gClient->GetShadow(TGFrame::GetDefaultFrameBackground()));
+void UiHelper::setHeight(TGFrame* frame, int height){
+    frame->SetHeight(height);
+    frame->ChangeOptions(frame->GetOptions() | kFixedHeight);
 }

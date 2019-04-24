@@ -28,7 +28,9 @@ protected:
 	virtual P* instantinatePresenter()=0;
 
 public:
-	AbstractView(const TGWindow *w = 0) : TGCompositeFrame(w) {}
+	AbstractView(const TGWindow *w = 0) : TGCompositeFrame(w) {
+		presenter = nullptr;
+	}
 
 	~AbstractView() {
 		delete presenter;

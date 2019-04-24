@@ -34,6 +34,8 @@ class FilesView : public AbstractView<FilesPresenter> {
 
     void onFileSelected(Int_t selectedNumber);
 //    void onFileSelectionChanged();
+
+//    void HandleConfigure(Event_t *event);
 };
 
 #endif /* SRC_VIEWS_FILES_FILESVIEW_H_ */

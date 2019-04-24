@@ -10,6 +10,9 @@
 
 #include "./../AbstractView.h"
 #include "ProjectPresenter.h"
+
+#include "../files/FilesView.h"
+#include "../plots/PlotsView.h"
 #include <TGSplitter.h>
 #include <TGShutter.h>
 
@@ -23,6 +26,8 @@ class ProjectView : public AbstractView<ProjectPresenter> {
 	// Declare UI elements
     TGHSplitter* splitter;
     TGShutter* shutter;
+    FilesView* filesView;
+    PlotsView* plotsView;
 
   public:
     ProjectView(const TGWindow *w = 0);
@@ -30,6 +35,9 @@ class ProjectView : public AbstractView<ProjectPresenter> {
 
     // Override base class virtual functions
     ProjectPresenter* instantinatePresenter();
+
+    // Hack for resizing the TGCanvas
+    void HandleConfigure(Event_t *event);
 };
 
 #endif /* SRC_VIEWS_PROJECT_PROJECTVIEW_H_ */

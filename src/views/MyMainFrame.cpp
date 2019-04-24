@@ -45,11 +45,11 @@ MyMainFrame::MyMainFrame() : TGMainFrame(gClient->GetRoot(), Constants::windowWi
     AddFrame(toolbar, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX, Padding::dx, Padding::dx, Padding::dx, Padding::dx));
 
     // Horizontal line
-    // AddFrame(new TGHorizontal3DLine(this), new TGLayoutHints(kLHintsExpandX, 0, 0, 0, 0));
+    AddFrame(new TGHorizontal3DLine(this), new TGLayoutHints(kLHintsExpandX, 0, 0, 0, 0));
 
     // Project container
     projectContainer = new TGCompositeFrame(this);
-    UiHelper::setDarkBackground(projectContainer);
+    UiHelper::setDarkerBackground(projectContainer);
     AddFrame(projectContainer, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY));
 
 //    Int_t parts[] = {100};
