@@ -16,6 +16,7 @@ class PlotsPresenter;
 class PlotsView : public AbstractView<PlotsPresenter> {
   protected:
     void initUI();
+    void connectSlots();
 
   private:
 	// Declare UI elements

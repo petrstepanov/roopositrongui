@@ -18,29 +18,53 @@
 #include <TGClient.h>
 #include <TColor.h>
 #include <TGFrame.h>
-#include "../resources/Constants.h"
 #include <iostream>
+#include "../resources/Constants.h"
+#include "Debug.h"
 
 UiHelper::UiHelper() {}
 
 UiHelper* UiHelper::instance = NULL;
 
-TGFileInfo* UiHelper::getFileFromDialog(const char* fileDescription, const char* fileExtension){
-    // show file dialog
-    TGFileInfo* fileInfo = new TGFileInfo();
-    const char* filetypes[] = { fileDescription, fileExtension, 0, 0 };
-    static TString dir(".");
-    fileInfo->fFileTypes = filetypes;
-    fileInfo->fIniDir = StrDup(dir);
-    // Show the dialog
-    new TGFileDialog(gClient->GetRoot(), mainFrame ? mainFrame : gClient->GetRoot(), EFileDialogMode::kFDOpen, fileInfo);
-    // printf("Open file: %s (dir: %s)\n", fileInfo->fFilename, fileInfo->fIniDir);
-    return fileInfo;
+TList* UiHelper::getFilesFromDialog(const char** filetypes){
+	static TString dir(".");
+	TGFileInfo fileInfo;
+	fileInfo.fFileTypes = filetypes;
+	fileInfo.fIniDir = StrDup(dir);
+	TList* newFilenamesList;
+
+	const TGWindow* mainFrame = UiHelper::getInstance()->getMainFrame(); // For dialog centering
+	new TGFileDialog(gClient->GetRoot(), mainFrame ? mainFrame : gClient->GetRoot(), EFileDialogMode::kFDOpen, &fileInfo);
+
+	// Save current directory
+	dir = fileInfo.fIniDir;
+	if (fileInfo.fMultipleSelection && fileInfo.fFileNamesList) {
+		newFilenamesList = (TList*)(fileInfo.fFileNamesList->Clone("newFilenamesList"));
+	}
+	else {
+		newFilenamesList = new TList();
+		if (fileInfo.fFilename){
+			newFilenamesList->Add(new TObjString(fileInfo.fFilename));
+		}
+	}
+	#ifdef USEDEBUG
+		Debug("UiHelper::getFilesFromDialog");
+		newFilenamesList->Print("V");
+	#endif
+	return newFilenamesList;
 }
 
-int UiHelper::showOkDialog(const char* message){
+const TString* UiHelper::getFileFromDialog(const char** filetypes){
+	TList* files = getFilesFromDialog(filetypes);
+	TObject* o = files->At(0);
+	TObjString* objString = dynamic_cast<TObjString*>(o);
+	const TString* s = &(objString->GetString());
+	return s;
+}
+
+int UiHelper::showOkDialog(const char* message, const EMsgBoxIcon msgBoxIcon){
     int retval;
-    new TGMsgBox(gClient->GetRoot(), mainFrame ? mainFrame : gClient->GetRoot(), Constants::applicationName, message, kMBIconAsterisk, kMBOk, &retval);
+    new TGMsgBox(gClient->GetRoot(), mainFrame ? mainFrame : gClient->GetRoot(), Constants::applicationName, message, msgBoxIcon, kMBOk, &retval);
     return retval;
 }
 

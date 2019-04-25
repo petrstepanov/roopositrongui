@@ -24,6 +24,7 @@ class ToolbarPresenter;
 class ToolbarView : public AbstractView<ToolbarPresenter> {
   protected:
     void initUI();
+    void connectSlots();
 
   public:
     ToolbarView(const TGWindow *w = 0);

@@ -19,6 +19,7 @@ class FilesPresenter;
 class FilesView : public AbstractView<FilesPresenter> {
   protected:
     void initUI();
+    void connectSlots();
 
   public:
     FilesView(const TGWindow *w = 0);
@@ -27,15 +28,15 @@ class FilesView : public AbstractView<FilesPresenter> {
     // Override base class virtual functions
     FilesPresenter* instantinatePresenter();
 
+    // Ui elements
     TGListBox* filesListBox;
-    TGNumberEntry* skipLinesNumberEntry;
-    TGNumberEntry* readChannelsNumberEntry;
+    TGButton* addFilesButton;
 	TGButton* removeFilesButton;
+	TGNumberEntry* minChannelNumberEntry;
+	TGNumberEntry* maxChannelNumberEntry;
+	TGTextButton* importSpectraButton;
 
     void onFileSelected(Int_t selectedNumber);
-//    void onFileSelectionChanged();
-
-//    void HandleConfigure(Event_t *event);
 };
 
 #endif /* SRC_VIEWS_FILES_FILESVIEW_H_ */

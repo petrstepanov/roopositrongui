@@ -21,6 +21,7 @@ class ProjectPresenter;
 class ProjectView : public AbstractView<ProjectPresenter> {
   protected:
     void initUI();
+    void connectSlots();
 
   private:
 	// Declare UI elements

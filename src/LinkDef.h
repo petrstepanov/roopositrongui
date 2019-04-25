@@ -8,6 +8,7 @@
 #pragma link C++ class MyMainFrame;
 #pragma link C++ class ToolbarPresenter;
 #pragma link C++ class Model;
+#pragma link C++ class Spectrum;
 
 // Model classes to be saved to hard drive
 #pragma link C++ class ProjectModel;

@@ -11,11 +11,14 @@
 #include "../../model/Model.h"
 #include "../../model/branches/Spectrum.h"
 #include "../../util/UiHelper.h"
-#include "../../util/FileUtils.h"
+#include "../../util/HistUtils.h"
+#include "../../util/RootHelper.h"
 
-#include <TObject.h>
+#include <TRandom.h>
 #include <TGFileDialog.h>
 #include <TObjString.h>
+#include <TSystem.h>
+#include <TGMsgBox.h>
 
 FilesPresenter::FilesPresenter(FilesView* view) : AbstractPresenter<Model, FilesView>(view) {
 	model = instantinateModel();
@@ -32,84 +35,99 @@ Model* FilesPresenter::instantinateModel() {
 void FilesPresenter::onInitModel() {
 	// Connect Model signals to slots
 	model->Connect("spectraDeleted()", "FilesPresenter", this, "handleSpectraDeleted()");
+	model->Connect("spectrumDeleted(Int_t)", "FilesPresenter", this, "handleSpectrumDeleted(Int_t)");
+	model->Connect("spectrumAdded(Spectrum*)", "FilesPresenter", this, "handleSpectrumAdded(Spectrum*)");
+	model->Connect("channelsNumberSet(Int_t)", "FilesPresenter", this, "handleChannelsNumberSet(Int_t)");
+
+	// Update ui with default model values
+	// Reflect list of spectra
+	TObjArray* spectra = model->getSpectra();
+	for (UInt_t i = 0; i < spectra->GetSize(); i++){
+		if (Spectrum* spectrum = dynamic_cast<Spectrum*>(spectra->At(i))){
+			handleSpectrumAdded(spectrum);
+		}
+	}
+
+	// Set trimming limits
+	handleChannelsNumberSet(model->getNumberOfChannels());
 }
 
 // Slots from View
 void FilesPresenter::onAddFilesClicked() {
-
 	// Get new spectra fileInfolenames from fileInfole dilog
-	const char *fileInfoletypes[] = { "Maestro spectra", "*.Spe", "All files", "*", 0, 0 };
-	static TString dir(".");
-	TGFileInfo fileInfo;
-	fileInfo.fFileTypes = fileInfoletypes;
-	fileInfo.fIniDir = StrDup(dir);
-	TList* newFilenamesList;
-
-	const TGWindow* mainFrame = UiHelper::getInstance()->getMainFrame(); // For dialog centering
-	new TGFileDialog(gClient->GetRoot(), mainFrame ? mainFrame : gClient->GetRoot(), EFileDialogMode::kFDOpen, &fileInfo);
-
-	// Save current directory
-	dir = fileInfo.fIniDir;
-	if (fileInfo.fMultipleSelection && fileInfo.fFileNamesList) {
-		newFilenamesList = fileInfo.fFileNamesList;
-//		TObjString *el;
-//		TIter next(fileInfo.fFileNamesList);
-//		while ((el = (TObjString *) next())) {
-//			new TFile(el->GetString(), "update");
-//		}
-	} else if (fileInfo.fFilename) {
-		newFilenamesList = new TList();
-		newFilenamesList->Add(new TObjString(fileInfo.fFilename));
-	}
-
-	#ifdef USEDEBUG
-		Debug("FilesPresenter::onAddFilesClicked");
-		newFilenamesList->Print("V");
-	#endif
+	const char *filetypes[] = { "Maestro spectra", "*.Spe", "All files", "*", 0, 0 };
+	TList* newFilenamesList = UiHelper::getInstance()->getFilesFromDialog(filetypes);
 	if (newFilenamesList->GetSize()==0) return;
 
 	// See if import limits were changed. Delete existing model spectra and mark for re-import
-	Int_t skipLines = atoi(view->skipLinesNumberEntry->GetNumberEntry()->GetText());
-	Int_t readLines = atoi(view->readChannelsNumberEntry->GetNumberEntry()->GetText());
+	// Int_t skipLines = atoi(view->skipLinesNumberEntry->GetNumberEntry()->GetText());
+	// Int_t readLines = atoi(view->readChannelsNumberEntry->GetNumberEntry()->GetText());
 
-	if (skipLines != model->getProjectModel()->skipLines || readLines != model->getProjectModel()->readLines){
-		TObjArray* spectraObjArray = model->getSpectra();
-		for (Int_t i=0 ; i<spectraObjArray->GetSize(); i++){
-			TObject* o = spectraObjArray->At(i);
-			if (TNamed* n = dynamic_cast<TNamed*>(o)){
-				newFilenamesList->Add(new TObjString(n->GetName()));
-			}
-		}
-		model->deleteSpectra();
-	}
-
-	// Iterate through new filenames
-	TObjArray* currentSpectra = model->getProjectModel()->spectra;
+	// Iterate through new filenames and add them to model
 	TIter next(newFilenamesList);
 	while (TObject *obj = next()){
 		if (TObjString* objString = dynamic_cast<TObjString*>(obj)){
-			// See if filename already exists
-			const char* filename = objString->GetString().Data();
-			if (!model->getProjectModel()->spectra->FindObject(filename)){
-//				Spectrum* spectrum = new Spectrum();
-//				spectrum->SetName(filename);
-				// Import and convert spectrum
+			// Create unique identifier for new spectrum
+			Int_t intUID = RootHelper::getInstance()->getRandomInt();
+			Spectrum* newSpectrum = new Spectrum(intUID);
+			const char* fileNamePath = objString->GetString().Data();
+			// Set spectrum name
+			newSpectrum->filename = new TString(gSystem->BaseName(fileNamePath));
+			// Import histogram
+			newSpectrum->histogram = HistUtils::importTH1I(fileNamePath);
+			// Add spectrum if number of channels is consistent
+			if (checkImportSuccessful(newSpectrum->histogram)){
+				model->addSpectrum(newSpectrum);
+			}
+			else {
+				TString message = TString::Format("Spectrum %s has incorrect channels number", newSpectrum->filename->Data());
+				UiHelper::getInstance()->showOkDialog(message.Data(), EMsgBoxIcon::kMBIconStop);
 			}
 		}
 	}
+}
 
-	// Update model spectra map with new Spectra()
-
-	// If changed "Skip lines" or "Read channels" - recalculate all
-	// Otherwise only new
+Bool_t FilesPresenter::checkImportSuccessful(TH1* histogram){
+	if (histogram == nullptr) return kFALSE;
+	if (model->getNumberOfChannels() == 0){
+		model->setNumberOfChannels(histogram->GetXaxis()->GetNbins());
+		return kTRUE;
+	}
+	return model->getNumberOfChannels() == histogram->GetXaxis()->GetNbins();
 }
 
 void FilesPresenter::onRemoveFilesClicked() {
-
+	Int_t selectedId = view->filesListBox->GetSelected();
+	model->deleteSpectrum(selectedId);
 }
 
-void FilesPresenter::onImportSpectraClicked() {
+// Slots from Model
 
+void FilesPresenter::handleSpectrumAdded(Spectrum* spectrum){
+	view->filesListBox->AddEntry(spectrum->filename->Data(), spectrum->id);
+	view->filesListBox->Layout();
+	view->importSpectraButton->SetEnabled(kTRUE);
 }
 
+void FilesPresenter::handleChannelsNumberSet(Int_t channels){
+	if (channels == 0){
+		view->minChannelNumberEntry->SetState(kFALSE);
+		view->maxChannelNumberEntry->SetState(kFALSE);
+		return;
+	}
+	view->minChannelNumberEntry->SetState(kTRUE);
+	view->maxChannelNumberEntry->SetState(kTRUE);
+	view->minChannelNumberEntry->SetLimitValues(1, channels);
+	view->maxChannelNumberEntry->SetLimitValues(1, channels);
+}
 
+void FilesPresenter::handleSpectrumDeleted(Int_t id){
+	view->filesListBox->RemoveEntry(id);
+	if (model->getSpectra()->GetSize()==0){
+		view->importSpectraButton->SetEnabled(kFALSE);
+	}
+}
+
+void FilesPresenter::handleSpectraDeleted(){
+	view->filesListBox->RemoveAll();
+}

@@ -15,6 +15,7 @@
 #include "ToolbarView.h"
 #include "../AbstractPresenter.h"
 
+#include "../../resources/Constants.h"
 #include "../../model/Model.h"
 #include "../../util/Debug.h"
 #include "../../util/UiHelper.h"
@@ -44,13 +45,8 @@ void ToolbarPresenter::onNewButtonClicked(){
 }
 
 void ToolbarPresenter::onOpenButtonClicked(){
-	Debug("ToolbarPresenter::onOpenButtonClicked");
-    TGFileInfo* fileInfo = UiHelper::getInstance()->getFileFromDialog("RooLifetime Projects", "*.[rR][oO][oO][tT]");
-    if (!fileInfo->fFilename){
-        return;
-    }
-    TString* fileNamePath = new TString(fileInfo->fFilename);
-    // Update Model with new file name (virtual function)
+	const char *filetypes[] = { Form("%s projects", Constants::applicationName), "*.root", 0, 0 };
+	const TString* fileNamePath = UiHelper::getInstance()->getFileFromDialog(filetypes);
     model->readProjectFromFile(fileNamePath);
 }
 

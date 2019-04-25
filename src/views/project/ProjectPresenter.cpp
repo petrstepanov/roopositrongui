@@ -12,15 +12,15 @@
 
 #include <TGFileDialog.h>
 
-ProjectPresenter::ProjectPresenter(ProjectView* view) : AbstractPresenter<ProjectModel, ProjectView>(view) {
+ProjectPresenter::ProjectPresenter(ProjectView* view) : AbstractPresenter<Model, ProjectView>(view) {
 	model = instantinateModel();
 	onInitModel();
 }
 
 ProjectPresenter::~ProjectPresenter(){}
 
-ProjectModel* ProjectPresenter::instantinateModel() {
-	return Model::getInstance()->getProjectModel();
+Model* ProjectPresenter::instantinateModel() {
+	return Model::getInstance();
 }
 
 // Slots from Model

@@ -8,12 +8,10 @@
 #include "ProjectModel.h"
 
 ProjectModel::ProjectModel() {
-	channelWidth = 0.006186;
-	skipLines = 12;
-	readLines = 8192;
-//	minTrimChannel = 1;
-//	maxTrimChannel = 8192;
+	minTrimChannel = 1;
+	maxTrimChannel = 8192;
 	spectra = new TObjArray();
+	channels = new RooRealVar("channels", "Channels axis", minTrimChannel-1, maxTrimChannel, "ch");
 }
 
 ProjectModel::~ProjectModel() {}

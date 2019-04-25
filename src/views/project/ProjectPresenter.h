@@ -13,13 +13,13 @@
 
 class ProjectView;
 
-class ProjectPresenter : public AbstractPresenter<ProjectModel, ProjectView> {
+class ProjectPresenter : public AbstractPresenter<Model, ProjectView> {
 public:
     ProjectPresenter(ProjectView* view);
     virtual ~ProjectPresenter();
 
     // Override base class virtual methods
-    ProjectModel* instantinateModel();
+    Model* instantinateModel();
 
     // Signals from model
     void onInitModel();

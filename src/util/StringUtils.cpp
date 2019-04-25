@@ -152,6 +152,11 @@ std::string StringUtils::ordinal(const char* name, int index) {
 	return s;
 }
 
+bool StringUtils::isEmpty(TString* string) {
+	return isEmpty(string->Data());
+}
+
+
 bool StringUtils::isEmpty(const char* string) {
 	std::string s = string;
 	for (unsigned i = 0; i < s.length(); ++i) {

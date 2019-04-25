@@ -17,14 +17,17 @@
 #include <TGFileDialog.h>
 #include <TGLabel.h>
 #include <TGWindow.h>
+#include <TGMsgBox.h>
 
 class UiHelper {
 public:
     static UiHelper* getInstance();
     static void setLabelColor(TGLabel* label, const char* color);
 
-    int showOkDialog(const char* message);
-    TGFileInfo* getFileFromDialog(const char* fileDescription, const char* fileExtension);
+    TList* getFilesFromDialog(const char** filetypes);
+    const TString* getFileFromDialog(const char** filetypes);
+    int showOkDialog(const char* message, EMsgBoxIcon msgBoxIcon);
+
     void setMainFrame(TGWindow* window);
     const TGWindow* getMainFrame();
 

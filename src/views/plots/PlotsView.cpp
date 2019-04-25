@@ -15,12 +15,12 @@
 #include <TGButton.h>
 
 PlotsView::PlotsView(const TGWindow *w) : AbstractView<PlotsPresenter>(w){
-	// Instantinate presenter
-	presenter = instantinatePresenter();
-	// Initialize UI elements
-
 	// Build UI
 	initUI();
+
+	// Instantinate presenter
+	presenter = instantinatePresenter();
+	connectSlots();
 }
 
 PlotsView::~PlotsView(){};
@@ -55,4 +55,8 @@ void PlotsView::initUI(){
     controlsHorizontalFrame->AddFrame(saveImagesTextButton, new TGLayoutHints(kLHintsNormal, Padding::dx));
 
     AddFrame(controlsHorizontalFrame, new TGLayoutHints(kLHintsNormal | kLHintsExpandX, 0, 0, Padding::dy, 0));
+}
+
+void PlotsView::connectSlots(){
+	// button->Connect("Clicked()", "__View", presenter, "onButtonClicked()");
 }

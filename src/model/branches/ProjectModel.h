@@ -11,17 +11,18 @@
 #include <RtypesCore.h>
 #include <TObject.h>
 #include <TObjArray.h>
+#include <RooRealVar.h>
 
 class ProjectModel : public TObject {
 public:
 	ProjectModel();
 	virtual ~ProjectModel();
 
-	Double_t channelWidth;
-	Int_t skipLines;
-	Int_t readLines;
-//	Int_t maxSpectrumChannel;
+	Int_t minTrimChannel = 1;
+	Int_t maxTrimChannel = 8192;
+	Int_t numberOfChannels = 0; // Originally is zero;
 	TObjArray* spectra;
+	RooRealVar* channels;
 
 	ClassDef(ProjectModel, 1)
 };

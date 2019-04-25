@@ -12,31 +12,43 @@
 #include <RtypesCore.h>
 #include <TString.h>
 #include "branches/ProjectModel.h"
+#include "branches/Spectrum.h"
 
 class Model : public TQObject {
 public:
 	static Model* getInstance();
 
-	// Objects saved and read to hard drive
-
+	// Project
+    TString* getProjectFilename();
+    Bool_t isProjectModifiedAfterSave();
+	Bool_t saveProjectToFile(TString* filename = nullptr);
+	Bool_t readProjectFromFile(const TString* filename);
 	void newProject();
-	Bool_t saveProjectToFile(TString* filename);
-	Bool_t readProjectFromFile(TString* filename);
 	void closeProject();
 
-    void projectCreated(); // *SIGNAL*
+	// Spectra manipulation
+	void deleteSpectra();
+	void deleteSpectrum(Int_t id);
+    void addSpectrum(Spectrum* spectrum);
+    TObjArray* getSpectra();
+
+    // Number of channels
+    Int_t getNumberOfChannels();
+    void setNumberOfChannels(Int_t channels);
+
+    // Spectra trim
+    void setTrimChannels(Int_t minChannel, Int_t maxChannel);
+    Int_t getMinTrimChannel();
+    Int_t getMaxTrimChannel();
+
+	// Signals
+    void channelsNumberSet(Int_t channels); // *SIGNAL*
+	void projectCreated(); // *SIGNAL*
     void projectClosed(); // *SIGNAL*
     void projectSaved(TString* filename); // *SIGNAL*
     void spectraDeleted(); // *SIGNAL*
-
-
-    // Getters
-    TString* getProjectFilename();
-    Bool_t isProjectModifiedAfterSave();
-    ProjectModel* getProjectModel();
-
-    TObjArray* getSpectra();
-    void deleteSpectra();
+    void spectrumDeleted(Int_t id); // *SIGNAL*
+    void spectrumAdded(Spectrum* spectrum); // *SIGNAL*
 
 private:
 	Model();

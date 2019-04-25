@@ -11,12 +11,12 @@
 #include "../../util/UiHelper.h"
 
 ProjectView::ProjectView(const TGWindow *w) : AbstractView<ProjectPresenter>(w){
-	// Instantinate presenter
-	presenter = instantinatePresenter();
-	// Initialize UI elements
-
 	// Build UI
 	initUI();
+
+	// Instantinate presenter and connect slots
+	presenter = instantinatePresenter();
+	connectSlots();
 }
 
 ProjectView::~ProjectView(){};
@@ -90,6 +90,10 @@ void ProjectView::initUI(){
     // Plots view
     PlotsView* plotsView = new PlotsView(rightVerticalFrame);
     rightVerticalFrame->AddFrame(plotsView, new TGLayoutHints(kLHintsNormal | kLHintsExpandX | kLHintsExpandY, 0, Padding::dx, Padding::dy*2, Padding::dy*2));
+}
+
+void ProjectView::connectSlots(){
+	// button->Connect("Clicked()", "__View", presenter, "onButtonClicked()");
 }
 
 // Hack resize Files View

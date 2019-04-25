@@ -31,6 +31,12 @@ public:
 
     // Slots from the Model
     void handleSpectraDeleted();
+    void handleSpectrumDeleted(Int_t id);
+    void handleSpectrumAdded(Spectrum* spectrum);
+    void handleChannelsNumberSet(Int_t);
+
+private:
+    Bool_t checkImportSuccessful(TH1* histogram);
 
 };
 
