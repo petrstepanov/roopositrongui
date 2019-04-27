@@ -13,6 +13,7 @@
 #include <TGListBox.h>
 #include <TGButton.h>
 #include <TGNumberEntry.h>
+#include <TGLabel.h>
 
 class FilesPresenter;
 
@@ -29,12 +30,13 @@ class FilesView : public AbstractView<FilesPresenter> {
     FilesPresenter* instantinatePresenter();
 
     // Ui elements
+    TGLabel* filesNumberLabel;
     TGListBox* filesListBox;
     TGButton* addFilesButton;
 	TGButton* removeFilesButton;
 	TGNumberEntry* minChannelNumberEntry;
 	TGNumberEntry* maxChannelNumberEntry;
-	TGTextButton* importSpectraButton;
+	TGTextButton* trimSpectraButton;
 
     void onFileSelected(Int_t selectedNumber);
 };

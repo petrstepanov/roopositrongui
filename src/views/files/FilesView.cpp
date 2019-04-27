@@ -33,7 +33,7 @@ void FilesView::initUI() {
 	UiHelper::setDarkBackground(this);
 
 	// Files list box
-	TGLabel* filesNumberLabel = new TGLabel(this, "No files loaded");
+	filesNumberLabel = new TGLabel(this, "No files loaded");
 	// filesNumberLabel->SetTextJustify(kTextLeft);
 	UiHelper::setDarkBackground(filesNumberLabel);
 	UiHelper::setDarkBackground(filesNumberLabel);
@@ -48,8 +48,8 @@ void FilesView::initUI() {
 	TGHorizontalFrame* horizohtalFrame = new TGHorizontalFrame(this);
 	addFilesButton = new TGTextButton(horizohtalFrame, "Add files...");
 	removeFilesButton = new TGTextButton(horizohtalFrame, "Remove");
-	horizohtalFrame->AddFrame(addFilesButton, new TGLayoutHints(kLHintsNormal | kLHintsExpandX, 0, Padding::dx / 2, 0, 0));
-	horizohtalFrame->AddFrame(removeFilesButton, new TGLayoutHints(kLHintsNormal | kLHintsExpandX, Padding::dx / 2, 0, 0, 0));
+	horizohtalFrame->AddFrame(removeFilesButton, new TGLayoutHints(kLHintsNormal | kLHintsExpandX, 0, Padding::dx / 2, 0, 0));
+	horizohtalFrame->AddFrame(addFilesButton, new TGLayoutHints(kLHintsNormal | kLHintsExpandX, Padding::dx / 2, 0, 0, 0));
 	removeFilesButton->SetEnabled(kFALSE);
 	AddFrame(horizohtalFrame, new TGLayoutHints(kLHintsNormal | kLHintsExpandX, 0, 0, Padding::dy, Padding::dy));
 	UiHelper::setDarkBackground(horizohtalFrame);
@@ -77,32 +77,32 @@ void FilesView::initUI() {
 //	AddFrame(readChannelsFrame, new TGLayoutHints(kLHintsNormal | kLHintsExpandX, 0, 0, Padding::dy, Padding::dy));
 
 	// Trim data points
+	TGLabel* trimPointsLabel = new TGLabel(this, "Trim channels (will clear existing fits)");
+	UiHelper::setDarkBackground(trimPointsLabel);
+	AddFrame(trimPointsLabel, new TGLayoutHints(kLHintsNormal, 0, 0, 3*Padding::dy, Padding::dy));
+
 	TGCompositeFrame* trimPointsFrame = new TGHorizontalFrame(this);
 	UiHelper::setDarkBackground(trimPointsFrame);
-	TGLabel* trimPointsLabel = new TGLabel(trimPointsFrame, "Trim data points");
-	UiHelper::setDarkBackground(trimPointsLabel);
-	TGLabel* dashLabel = new TGLabel(trimPointsFrame, "  -  ");
-	UiHelper::setDarkBackground(dashLabel);
 	minChannelNumberEntry = new TGNumberEntry(trimPointsFrame, 1, 5, -1, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative,
 			TGNumberFormat::kNELLimitMinMax, 1, 99999);
+	TGLabel* dashLabel = new TGLabel(trimPointsFrame, "  -  ");
+	UiHelper::setDarkBackground(dashLabel);
 	maxChannelNumberEntry = new TGNumberEntry(trimPointsFrame, 8192, 5, -1, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative,
 			TGNumberFormat::kNELLimitMinMax, 1, 99999);
-	trimPointsFrame->AddFrame(trimPointsLabel, new TGLayoutHints(kLHintsLeft | kLHintsCenterY));
-	trimPointsFrame->AddFrame(maxChannelNumberEntry, new TGLayoutHints(kLHintsRight | kLHintsCenterY));
-	trimPointsFrame->AddFrame(dashLabel, new TGLayoutHints(kLHintsRight | kLHintsCenterY));
-	trimPointsFrame->AddFrame(minChannelNumberEntry, new TGLayoutHints(kLHintsRight | kLHintsCenterY));
-	AddFrame(trimPointsFrame, new TGLayoutHints(kLHintsNormal | kLHintsExpandX, 0, 0, Padding::dy, Padding::dy));
+	trimSpectraButton = new TGTextButton(trimPointsFrame, "Trim");
+	trimSpectraButton->SetEnabled(kFALSE);
 
-	// Import Button
-	importSpectraButton = new TGTextButton(this, "Import Spectra");
-	AddFrame(importSpectraButton, new TGLayoutHints(kLHintsNormal | kLHintsExpandX, 0, 0, Padding::dy, Padding::dy));
-	importSpectraButton->SetEnabled(kFALSE);
+	trimPointsFrame->AddFrame(minChannelNumberEntry, new TGLayoutHints(kLHintsLeft | kLHintsCenterY));
+	trimPointsFrame->AddFrame(dashLabel, new TGLayoutHints(kLHintsLeft | kLHintsCenterY));
+	trimPointsFrame->AddFrame(maxChannelNumberEntry, new TGLayoutHints(kLHintsLeft | kLHintsCenterY));
+	trimPointsFrame->AddFrame(trimSpectraButton, new TGLayoutHints(kLHintsLeft| kLHintsCenterY | kLHintsExpandX, Padding::dx));
+	AddFrame(trimPointsFrame, new TGLayoutHints(kLHintsNormal | kLHintsExpandX, 0, 0, Padding::dy, Padding::dy));
 }
 
 void FilesView::connectSlots(){
 	addFilesButton->Connect("Clicked()", "FilesPresenter", presenter, "onAddFilesClicked()");
 	removeFilesButton->Connect("Clicked()", "FilesPresenter", presenter, "onRemoveFilesClicked()");
-	importSpectraButton->Connect("Clicked()", "FilesPresenter", presenter, "onImportSpectraClicked()");
+	trimSpectraButton->Connect("Clicked()", "FilesPresenter", presenter, "onTrimSpectraClicked()");
 	filesListBox->Connect("Selected(Int_t)", "FilesView", this, "onFileSelected(Int_t)");
 }
 

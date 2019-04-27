@@ -33,11 +33,13 @@ Model* FilesPresenter::instantinateModel() {
 }
 
 void FilesPresenter::onInitModel() {
-	// Connect Model signals to slots
+	// Connect slots to <- Model signals
 	model->Connect("spectraDeleted()", "FilesPresenter", this, "handleSpectraDeleted()");
 	model->Connect("spectrumDeleted(Int_t)", "FilesPresenter", this, "handleSpectrumDeleted(Int_t)");
 	model->Connect("spectrumAdded(Spectrum*)", "FilesPresenter", this, "handleSpectrumAdded(Spectrum*)");
 	model->Connect("channelsNumberSet(Int_t)", "FilesPresenter", this, "handleChannelsNumberSet(Int_t)");
+	model->Connect("trimChannelsSet(TVector2*)", "FilesPresenter", this, "handleTrimChannelsSet(TVector2*)");
+	model->Connect("spectraNumberChanged(Int_t)", "FilesPresenter", this, "handleSpectraNumberChanged(Int_t)");
 
 	// Update ui with default model values
 	// Reflect list of spectra
@@ -50,13 +52,18 @@ void FilesPresenter::onInitModel() {
 
 	// Set trimming limits
 	handleChannelsNumberSet(model->getNumberOfChannels());
+	TVector2* trimChannels = new TVector2(model->getMinTrimChannel(), model->getMaxTrimChannel());
+	handleTrimChannelsSet(trimChannels);
+
+	// Enable/disable trim button
+	view->trimSpectraButton->SetEnabled(model->getSpectra()->GetSize()>0);
 }
 
 // Slots from View
 void FilesPresenter::onAddFilesClicked() {
 	// Get new spectra fileInfolenames from fileInfole dilog
 	const char *filetypes[] = { "Maestro spectra", "*.Spe", "All files", "*", 0, 0 };
-	TList* newFilenamesList = UiHelper::getInstance()->getFilesFromDialog(filetypes);
+	TList* newFilenamesList = UiHelper::getInstance()->openFilesDialog(filetypes);
 	if (newFilenamesList->GetSize()==0) return;
 
 	// See if import limits were changed. Delete existing model spectra and mark for re-import
@@ -74,7 +81,7 @@ void FilesPresenter::onAddFilesClicked() {
 			// Set spectrum name
 			newSpectrum->filename = new TString(gSystem->BaseName(fileNamePath));
 			// Import histogram
-			newSpectrum->histogram = HistUtils::importTH1I(fileNamePath);
+			newSpectrum->histogram = HistUtils::importTH1I(fileNamePath, intUID);
 			// Add spectrum if number of channels is consistent
 			if (checkImportSuccessful(newSpectrum->histogram)){
 				model->addSpectrum(newSpectrum);
@@ -101,12 +108,17 @@ void FilesPresenter::onRemoveFilesClicked() {
 	model->deleteSpectrum(selectedId);
 }
 
-// Slots from Model
+void FilesPresenter::onTrimSpectraClicked(){
+	Int_t minChannel = view->minChannelNumberEntry->GetNumberEntry()->GetNumber();
+	Int_t maxChannel = view->maxChannelNumberEntry->GetNumberEntry()->GetNumber();
+	model->setTrimChannels(minChannel, maxChannel);
+}
 
+// Slots for <- Model signals
 void FilesPresenter::handleSpectrumAdded(Spectrum* spectrum){
 	view->filesListBox->AddEntry(spectrum->filename->Data(), spectrum->id);
 	view->filesListBox->Layout();
-	view->importSpectraButton->SetEnabled(kTRUE);
+	view->trimSpectraButton->SetEnabled(kTRUE);
 }
 
 void FilesPresenter::handleChannelsNumberSet(Int_t channels){
@@ -121,13 +133,31 @@ void FilesPresenter::handleChannelsNumberSet(Int_t channels){
 	view->maxChannelNumberEntry->SetLimitValues(1, channels);
 }
 
+void FilesPresenter::handleSpectraNumberChanged(Int_t number){
+	switch (number){
+	    case 0:
+	    	view->filesNumberLabel->SetText("No files loaded");
+	        break;
+	    case 2:
+	    	view->filesNumberLabel->SetText("1 file loaded");
+	        break;
+	    default:
+	    	view->filesNumberLabel->SetText(Form("%d files loaded", number));
+	}
+}
+
 void FilesPresenter::handleSpectrumDeleted(Int_t id){
 	view->filesListBox->RemoveEntry(id);
 	if (model->getSpectra()->GetSize()==0){
-		view->importSpectraButton->SetEnabled(kFALSE);
+		view->trimSpectraButton->SetEnabled(kFALSE);
 	}
 }
 
 void FilesPresenter::handleSpectraDeleted(){
 	view->filesListBox->RemoveAll();
+}
+
+void FilesPresenter::handleTrimChannelsSet(TVector2* vector){
+	view->minChannelNumberEntry->GetNumberEntry()->SetNumber((double)vector->X());
+	view->maxChannelNumberEntry->GetNumberEntry()->SetNumber((double)vector->Y());
 }

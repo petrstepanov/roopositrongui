@@ -15,7 +15,7 @@
 class HistUtils {
 
 public:
-    static TH1* importTH1I(const char* filename);
+    static TH1* importTH1I(const char* filename, int uid);
 	static TH1* cutHist(TH1* histogram, Int_t minBin, Int_t maxBin);
 	static RooDataHist* makeRooDataHist(TH1* histogram, RooRealVar* channels);
 };

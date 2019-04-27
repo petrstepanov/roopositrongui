@@ -14,15 +14,12 @@
 #include "MyMainFrame.h"
 
 #include <TApplication.h>
-#include <TG3DLine.h>
-#include <TGStatusBar.h>
 #include <iostream>
 #include <TGFrame.h>
 #include "../resources/Constants.h"
 #include "../resources/Images.h"
 #include "../util/UiHelper.h"
-#include "toolbar/ToolbarView.h"
-#include "project/ProjectView.h"
+#include "layout/LayoutView.h"
 
 MyMainFrame::MyMainFrame() : TGMainFrame(gClient->GetRoot(), Constants::windowWidth, Constants::windowHeight) {
 	SetIconPixmap(Images::applicationIcon);
@@ -33,49 +30,29 @@ MyMainFrame::MyMainFrame() : TGMainFrame(gClient->GetRoot(), Constants::windowWi
 	Connect("CloseWindow()", "MyMainFrame", this, "exit()");
     DontCallClose();
 
-    // SetBackgroundColor(TColor::Number2Pixel(kWhite));
-    // SetBackgroundColor(fClient->GetShadow(GetDefaultFrameBackground()));
-
     // Save reverence to MyMainFrame in UiHelper (for centering of modal dialogs)
     UiHelper::getInstance()->setMainFrame(this);
-    SetLayoutManager(new TGVerticalLayout(this));
 
-    // Toolbar
-    ToolbarView* toolbar = new ToolbarView(this);
-    AddFrame(toolbar, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX, Padding::dx, Padding::dx, Padding::dx, Padding::dx));
+    // Add main child frame - LayoutView
+	SetLayoutManager(new TGVerticalLayout(this));
+	LayoutView* layoutView = new LayoutView(this);
+    AddFrame(layoutView, new TGLayoutHints(kLHintsNormal | kLHintsExpandX | kLHintsExpandY));
 
-    // Horizontal line
-    AddFrame(new TGHorizontal3DLine(this), new TGLayoutHints(kLHintsExpandX, 0, 0, 0, 0));
-
-    // Project container
-    projectContainer = new TGCompositeFrame(this);
-    UiHelper::setDarkerBackground(projectContainer);
-    AddFrame(projectContainer, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY));
-
-//    Int_t parts[] = {100};
-    TGStatusBar* statusBar = new TGStatusBar(this);
-    AddFrame(statusBar, new TGLayoutHints(kLHintsBottom | kLHintsLeft | kLHintsExpandX));
-    statusBar->SetText("Welcome to RooLifetime. Create New Project or open existing.",0);
-
-    // Conect slots to model signals
-    Model* model = Model::getInstance();
-    model->Connect("projectCreated()", "MyMainFrame", this, "handleProjectCreated()");
-    model->Connect("projectClosed()", "MyMainFrame", this, "handleProjectClosed()");
-}
-
-MyMainFrame::~MyMainFrame(){
-    Cleanup();
-}
-
-void MyMainFrame::show(){
-	// Set minimum and maximum window size for window manager
+    // Set minimum and maximum window size for window manager
 	SetWMSizeHints(Constants::windowWidth, Constants::windowHeight, 1E4, 1E4, 1, 1);
 	MapSubwindows();
 	Layout();
 	// Issue - GetDefaultSize() returns zeros on Ubuntu 18.04.
     Resize(Constants::windowWidth, Constants::windowHeight);
-    // Maps the window "id" and all of its subwindows that have had map requests on the screen and put this window on the top of of the stack of all windows
+    // Maps the window "id" and all of its subwindows that have had map requests on the screen
+    // and put this window on the top of of the stack of all windows
     MapWindow();
+    // You can hide child frames only after the frames have been laid out and the sub windows of the composite frames have been mapped
+    uiReady();
+}
+
+MyMainFrame::~MyMainFrame(){
+    Cleanup();
 }
 
 void MyMainFrame::exit(){
@@ -83,26 +60,6 @@ void MyMainFrame::exit(){
 	gApplication->Terminate();   // to exit and close the ROOT session
 }
 
-// Slots for Model Signals
-void MyMainFrame::handleProjectCreated(){
-	Debug("MyMainFrame::handleProjectCreated");
-	// Remove current ProjectView if any
-	TGCompositeFrame* projectView = UiHelper::getFirstChildFrame(projectContainer);
- 	UiHelper::removeFrame(projectView);
-
-    ProjectView* newProjectView = new ProjectView(projectContainer);
-    projectContainer->AddFrame(newProjectView, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY));
-    projectContainer->MapSubwindows();
-    projectContainer->Layout();
-}
-
-void MyMainFrame::handleProjectClosed(){
-	Debug("MyMainFrame::handleProjectClosed");
-	// Remove Project view when new Project closed
-	// Remove current ProjectView if any
-	TGCompositeFrame* projectView = UiHelper::getFirstChildFrame(projectContainer);
- 	UiHelper::removeFrame(projectView);
-
- 	projectContainer->MapSubwindows();
-    projectContainer->Layout();
+void MyMainFrame::uiReady(){
+	Emit("uiReady()");
 }

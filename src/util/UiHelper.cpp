@@ -26,12 +26,12 @@ UiHelper::UiHelper() {}
 
 UiHelper* UiHelper::instance = NULL;
 
-TList* UiHelper::getFilesFromDialog(const char** filetypes){
+TList* UiHelper::openFilesDialog(const char** filetypes){
 	static TString dir(".");
 	TGFileInfo fileInfo;
 	fileInfo.fFileTypes = filetypes;
 	fileInfo.fIniDir = StrDup(dir);
-	TList* newFilenamesList;
+	TList* filenamesList;
 
 	const TGWindow* mainFrame = UiHelper::getInstance()->getMainFrame(); // For dialog centering
 	new TGFileDialog(gClient->GetRoot(), mainFrame ? mainFrame : gClient->GetRoot(), EFileDialogMode::kFDOpen, &fileInfo);
@@ -39,27 +39,59 @@ TList* UiHelper::getFilesFromDialog(const char** filetypes){
 	// Save current directory
 	dir = fileInfo.fIniDir;
 	if (fileInfo.fMultipleSelection && fileInfo.fFileNamesList) {
-		newFilenamesList = (TList*)(fileInfo.fFileNamesList->Clone("newFilenamesList"));
+		filenamesList = (TList*)(fileInfo.fFileNamesList->Clone("newFilenamesList"));
 	}
 	else {
-		newFilenamesList = new TList();
+		filenamesList = new TList();
 		if (fileInfo.fFilename){
-			newFilenamesList->Add(new TObjString(fileInfo.fFilename));
+			filenamesList->Add(new TObjString(fileInfo.fFilename));
 		}
 	}
 	#ifdef USEDEBUG
-		Debug("UiHelper::getFilesFromDialog");
-		newFilenamesList->Print("V");
+		filenamesList->Print("V");
 	#endif
-	return newFilenamesList;
+	return filenamesList;
 }
 
-const TString* UiHelper::getFileFromDialog(const char** filetypes){
-	TList* files = getFilesFromDialog(filetypes);
+const TString* UiHelper::openFileDialog(const char** filetypes){
+	TList* files = openFilesDialog(filetypes);
 	TObject* o = files->At(0);
 	TObjString* objString = dynamic_cast<TObjString*>(o);
 	const TString* s = &(objString->GetString());
 	return s;
+}
+
+const TString* UiHelper::saveFileDialog(const char** filetypes){
+	static TString dir(".");
+	TGFileInfo fileInfo;
+	fileInfo.fFileTypes = filetypes;
+	fileInfo.fIniDir = StrDup(dir);
+	TList* filenamesList;
+
+	const TGWindow* mainFrame = UiHelper::getInstance()->getMainFrame(); // For dialog centering
+	new TGFileDialog(gClient->GetRoot(), mainFrame ? mainFrame : gClient->GetRoot(), EFileDialogMode::kFDSave, &fileInfo);
+
+	// Save current directory
+	dir = fileInfo.fIniDir;
+	if (fileInfo.fMultipleSelection && fileInfo.fFileNamesList) {
+		filenamesList = (TList*)(fileInfo.fFileNamesList->Clone("newFilenamesList"));
+	}
+	else {
+		filenamesList = new TList();
+		if (fileInfo.fFilename){
+			filenamesList->Add(new TObjString(fileInfo.fFilename));
+		}
+	}
+	#ifdef USEDEBUG
+		std::cout << "UiHelper::saveFileDialog" << std::endl;
+		filenamesList->Print("V");
+	#endif
+
+	TObject* o = filenamesList->At(0);
+	TObjString* objString = dynamic_cast<TObjString*>(o);
+	const TString* s = &(objString->GetString());
+	return s;
+
 }
 
 int UiHelper::showOkDialog(const char* message, const EMsgBoxIcon msgBoxIcon){

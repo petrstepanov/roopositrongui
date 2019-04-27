@@ -35,6 +35,7 @@ public:
     static std::string ordinal(const char*, int index);
     static bool isEmpty(const char*);
     static bool isEmpty(TString* string);
+    static bool isEmpty(const TString* string);
 };
 
 #endif /* STRINGUTILS_H */

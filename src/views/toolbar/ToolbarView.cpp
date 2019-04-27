@@ -23,6 +23,8 @@ ToolbarView::ToolbarView(const TGWindow *w) : AbstractView<ToolbarPresenter>(w){
 
 	// Instantinate presenter and connect slots
 	presenter = instantinatePresenter();
+
+	// Connect slots to presenter
 	connectSlots();
 }
 
@@ -32,10 +34,15 @@ ToolbarPresenter* ToolbarView::instantinatePresenter(){
 
 void ToolbarView::initUI(){
 	newButton = new TGPictureButton(this, Images::makeTGPicture(Images::projectNewXpm));
+	newButton->SetStyle(1);
     openButton = new TGPictureButton(this, Images::makeTGPicture(Images::projectOpenXpm));
+	openButton->SetStyle(1);
     saveButton = new TGPictureButton(this, Images::makeTGPicture(Images::projectSaveXpm));
+	saveButton->SetStyle(1);
     saveAsButton = new TGPictureButton(this, Images::makeTGPicture(Images::projectSaveAsXpm));
+	saveAsButton->SetStyle(1);
     closeButton = new TGPictureButton(this, Images::makeTGPicture(Images::projectCloseXpm));
+	closeButton->SetStyle(1);
 
 
 	SetLayoutManager(new TGHorizontalLayout(this));
@@ -43,11 +50,12 @@ void ToolbarView::initUI(){
 	AddFrame(newButton, new TGLayoutHints(kLHintsLeft, 0));
 	AddFrame(openButton, new TGLayoutHints(kLHintsLeft, Padding::dx));
     AddFrame(saveButton, new TGLayoutHints(kLHintsLeft, Padding::dx));
-    saveButton->SetEnabled(kFALSE);
+    // saveButton->SetEnabled(kFALSE);
     AddFrame(saveAsButton, new TGLayoutHints(kLHintsLeft, Padding::dx));
-    saveAsButton->SetEnabled(kFALSE);
+    // saveAsButton->SetEnabled(kFALSE);
     AddFrame(closeButton, new TGLayoutHints(kLHintsRight, Padding::dx));
-    closeButton->SetEnabled(kFALSE);
+    // closeButton->SetEnabled(kFALSE);
+
     // AddFrame(filenameLabel, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, Padding::dx, Padding::dx, Padding::dx, Padding::dx));
     // TGFont *font = gClient->GetFont("-*-helvetica-medium-r-*-*-14-*-*-*-*-*");
     // filenameLabel->SetTextFont(font, kTRUE);
@@ -60,4 +68,13 @@ void ToolbarView::connectSlots(){
     saveButton->Connect("Clicked()", "ToolbarPresenter", presenter, "onSaveButtonClicked()");
     saveAsButton->Connect("Clicked()", "ToolbarPresenter", presenter, "onSaveAsButtonClicked()");
     closeButton->Connect("Clicked()", "ToolbarPresenter", presenter, "onCloseButtonClicked()");
+
+    // Global slots
+    TQObject::Connect("MyMainFrame", "uiReady()", "ToolbarView", this, "handleUiReady()");
+}
+
+void ToolbarView::handleUiReady(){
+	HideFrame(saveButton);
+	HideFrame(saveAsButton);
+	HideFrame(closeButton);
 }

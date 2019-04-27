@@ -13,6 +13,7 @@
 #include <TString.h>
 #include "branches/ProjectModel.h"
 #include "branches/Spectrum.h"
+#include <TVector2.h>
 
 class Model : public TQObject {
 public:
@@ -21,7 +22,7 @@ public:
 	// Project
     TString* getProjectFilename();
     Bool_t isProjectModifiedAfterSave();
-	Bool_t saveProjectToFile(TString* filename = nullptr);
+	Bool_t saveProjectToFile(const TString* filename);
 	Bool_t readProjectFromFile(const TString* filename);
 	void newProject();
 	void closeProject();
@@ -43,12 +44,14 @@ public:
 
 	// Signals
     void channelsNumberSet(Int_t channels); // *SIGNAL*
+    void spectraNumberChanged(Int_t number); // *SIGNAL*
 	void projectCreated(); // *SIGNAL*
     void projectClosed(); // *SIGNAL*
     void projectSaved(TString* filename); // *SIGNAL*
     void spectraDeleted(); // *SIGNAL*
     void spectrumDeleted(Int_t id); // *SIGNAL*
     void spectrumAdded(Spectrum* spectrum); // *SIGNAL*
+	void trimChannelsSet(TVector2* ); // *SIGNAL*
 
 private:
 	Model();
@@ -61,6 +64,8 @@ private:
 	TString* projectFilename;
 	Bool_t projectModifiedAfterSave;
 
+	// ClassDef(<ClassName>,<VersionNumber>)
+	// When a class has version 0 it is not stored in a root file but its base classes are
 	ClassDef(Model, 0)
 };
 

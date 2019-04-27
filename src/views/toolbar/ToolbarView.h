@@ -39,6 +39,9 @@ class ToolbarView : public AbstractView<ToolbarPresenter> {
 
     // Override base class virtual functions
     ToolbarPresenter* instantinatePresenter();
+
+    // Global slot for the uiReady event
+    void handleUiReady();
 };
 
 #endif /* TOOLBARVIEW_H */

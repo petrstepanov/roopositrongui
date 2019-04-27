@@ -17,7 +17,6 @@
 
 #include <TQObject.h>
 #include <iostream>
-#include "../util/Debug.h"
 
 template<class M, class V> class AbstractPresenter: public TQObject {
 protected:
@@ -28,7 +27,9 @@ protected:
 
 public:
 	AbstractPresenter(V* v){
-		Debug("AbtractPresenter::AbstractPresenter");
+		#ifdef USEDEBUG
+			std::cout << "AbtractPresenter::AbstractPresenter" << std::endl;
+		#endif
 		view = v;
 	}
 

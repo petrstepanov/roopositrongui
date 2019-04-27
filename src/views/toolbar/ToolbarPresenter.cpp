@@ -40,27 +40,29 @@ void ToolbarPresenter::onInitModel() {
 
 // Slots for signals from View
 void ToolbarPresenter::onNewButtonClicked(){
-	Debug("ToolbarPresenter::onNewButtonClicked");
 	model->newProject();
 }
 
 void ToolbarPresenter::onOpenButtonClicked(){
 	const char *filetypes[] = { Form("%s projects", Constants::applicationName), "*.root", 0, 0 };
-	const TString* fileNamePath = UiHelper::getInstance()->getFileFromDialog(filetypes);
+	const TString* fileNamePath = UiHelper::getInstance()->openFileDialog(filetypes);
     model->readProjectFromFile(fileNamePath);
 }
 
 void ToolbarPresenter::onSaveButtonClicked(){
+	// If no filename set do "Save As.." instead
 	TString* filename = model->getProjectFilename();
 	if (filename->Length()==0){
 		onSaveAsButtonClicked();
 		return;
 	}
+	// Otherwise save to existing filename
 	model->saveProjectToFile(filename);
 }
 
 void ToolbarPresenter::onSaveAsButtonClicked(){
-	TString* filename = model->getProjectFilename();
+	const char *filetypes[] = { Form("%s project", Constants::applicationName), "*.root", 0, 0 };
+	const TString* filename = UiHelper::getInstance()->saveFileDialog(filetypes);
 	model->saveProjectToFile(filename);
 }
 
@@ -70,15 +72,19 @@ void ToolbarPresenter::onCloseButtonClicked(){
 
 // Slots for signals from Model
 void ToolbarPresenter::handleProjectCreated(){
-	Debug("ToolbarPresenter::handleProjectCreated");
-	view->saveButton->SetEnabled(kTRUE);
-	view->saveAsButton->SetEnabled(kTRUE);
-	view->closeButton->SetEnabled(kTRUE);
+	view->ShowFrame(view->saveButton);
+	// view->saveButton->SetEnabled(kTRUE);
+	view->ShowFrame(view->saveAsButton);
+	// view->saveAsButton->SetEnabled(kTRUE);
+	view->ShowFrame(view->closeButton);
+	// view->closeButton->SetEnabled(kTRUE);
 }
 
 void ToolbarPresenter::handleProjectClosed(){
-	Debug("ToolbarPresenter::handleProjectClosed");
-	view->saveButton->SetEnabled(kFALSE);
-	view->saveAsButton->SetEnabled(kFALSE);
-	view->closeButton->SetEnabled(kFALSE);
+	view->HideFrame(view->saveButton);
+	// view->saveButton->SetEnabled(kFALSE);
+	view->HideFrame(view->saveAsButton);
+	// view->saveAsButton->SetEnabled(kFALSE);
+	view->HideFrame(view->closeButton);
+	// view->closeButton->SetEnabled(kFALSE);
 }

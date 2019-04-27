@@ -15,7 +15,6 @@
 #define MYMAINFRAME_H
 
 #include <TGFrame.h>
-#include "project/ProjectView.h"
 
 class MyMainFrame : public TGMainFrame {
 
@@ -24,16 +23,9 @@ public:
     virtual ~MyMainFrame();
 
     void exit();
-    void show();
-
-    // Slots for Model signals
-    void handleProjectCreated();
-    void handleProjectClosed();
+    void uiReady(); // *SIGNAL*
 
     ClassDef(MyMainFrame, 0);
-
-private:
-    TGCompositeFrame* projectContainer;
 };
 
 #endif /* MyMainFrameW_H */

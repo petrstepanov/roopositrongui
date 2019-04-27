@@ -19,7 +19,7 @@
 #include "../util/StringUtils.h"
 #include "../util/Debug.h"
 
-TH1* HistUtils::importTH1I(const char* filename) {
+TH1* HistUtils::importTH1I(const char* filename, int uid) {
 	// Open file
 	std::ifstream inFile(filename);
 
@@ -45,8 +45,8 @@ TH1* HistUtils::importTH1I(const char* filename) {
 	channels++;
 
 	// Create and import everything into ROOT histogram
-	TString name = TString::Format("histogram_%s", filename);
-	TString title = TString::Format("Histogram %s", filename);
+	TString name = TString::Format("histogram_%d", uid);
+	TString title = TString::Format("Histogram %d", uid);
 	TH1I* histogram = new TH1I(name.Data(), title.Data(), channels, 0, channels);
 
 	// Read correspondent number of channels
@@ -56,7 +56,9 @@ TH1* HistUtils::importTH1I(const char* filename) {
 		Int_t count;
 		streamLine >> count;
 		if (streamLine.fail()) {
-			Debug("FileUtils::importTH1I", "Failed parsing file.");
+			#ifdef USEDEBUG
+				std::cout << "FileUtils::importTH1I" << std::endl << "Failed parsing file." << std::endl;
+			#endif
 			streamLine.clear();
 			count = 0;
 		}

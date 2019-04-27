@@ -24,8 +24,9 @@ public:
     static UiHelper* getInstance();
     static void setLabelColor(TGLabel* label, const char* color);
 
-    TList* getFilesFromDialog(const char** filetypes);
-    const TString* getFileFromDialog(const char** filetypes);
+    TList* openFilesDialog(const char** filetypes);
+    const TString* openFileDialog(const char** filetypes);
+    const TString* saveFileDialog(const char** filetypes);
     int showOkDialog(const char* message, EMsgBoxIcon msgBoxIcon);
 
     void setMainFrame(TGWindow* window);

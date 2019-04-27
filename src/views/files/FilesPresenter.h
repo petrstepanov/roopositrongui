@@ -10,6 +10,7 @@
 
 #include "./../AbstractPresenter.h"
 #include "../../model/Model.h"
+#include <TVector2.h>
 
 class FilesView;
 
@@ -27,13 +28,15 @@ public:
     // Slots from the view
     void onAddFilesClicked();
     void onRemoveFilesClicked();
-    void onImportSpectraClicked();
+    void onTrimSpectraClicked();
 
     // Slots from the Model
     void handleSpectraDeleted();
     void handleSpectrumDeleted(Int_t id);
+    void handleSpectraNumberChanged(Int_t number);
     void handleSpectrumAdded(Spectrum* spectrum);
-    void handleChannelsNumberSet(Int_t);
+    void handleChannelsNumberSet(Int_t channels);
+    void handleTrimChannelsSet(TVector2* vector);
 
 private:
     Bool_t checkImportSuccessful(TH1* histogram);
