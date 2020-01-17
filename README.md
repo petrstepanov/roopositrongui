@@ -1,3 +1,3 @@
 # RooPositronGui
 
-Positron lifetime spectra fitting software. Based on RooPositron, this software features grahical user interface.
+Positron lifetime spectra fitting software. Program is based on the console [RooPositron application](https://github.com/petrstepanov/roopositron), but features graphical user interface.
