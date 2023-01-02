@@ -7,10 +7,13 @@
 
 #include "Spectrum.h"
 
-Spectrum::Spectrum(Int_t _id) : TNamed(Form("%d", _id), ""){
-	id = _id;
-	filename = nullptr;
-	histogram = nullptr;
+ClassImp(Spectrum);
+
+Spectrum::Spectrum(Int_t _id) :
+    TNamed(Form("%d", _id), "") {
+  id = _id;
+  filename = nullptr;
+  histogram = nullptr;
 //	cutHistogram = nullptr;
 //	dataHistogram = nullptr;
 //	integral = 0;
@@ -20,10 +23,11 @@ Spectrum::Spectrum(Int_t _id) : TNamed(Form("%d", _id), ""){
 //	minimumCount = 0;
 //	maximumCount = 0;
 //	averageBackground = 0;
-	model = nullptr;
-	resolutionFunction = nullptr;
-	plot = nullptr;
+  model = nullptr;
+  resolutionFunction = nullptr;
+  plot = nullptr;
 }
 
-Spectrum::~Spectrum(){}
+Spectrum::~Spectrum() {
+}
 

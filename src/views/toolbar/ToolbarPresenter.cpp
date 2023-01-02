@@ -20,8 +20,9 @@
 #include "../../util/Debug.h"
 #include "../../util/UiHelper.h"
 
-
 #include <TGFileDialog.h>
+
+ClassImp(ToolbarPresenter);
 
 ToolbarPresenter::ToolbarPresenter(ToolbarView* view) : AbstractPresenter<Model, ToolbarView>(view) {
 	model = instantinateModel();

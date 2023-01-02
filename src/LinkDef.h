@@ -5,11 +5,11 @@
 #pragma link C++ nestedclasses;
 
 // Classes with slots
-#pragma link C++ class MyMainFrame;
-#pragma link C++ class ToolbarPresenter;
-#pragma link C++ class Model;
-#pragma link C++ class ProjectModel;
-#pragma link C++ class Spectrum;
+#pragma link C++ class MyMainFrame+;
+#pragma link C++ class ToolbarPresenter+;
+#pragma link C++ class Model+;
+#pragma link C++ class ProjectModel+;
+#pragma link C++ class Spectrum+;
 
 // Model classes to be saved to hard drive
 

@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 project(RooPositronGui LANGUAGES CXX)
 
 # Find ROOT
-find_package(ROOT 6.20 CONFIG REQUIRED)
+find_package(ROOT CONFIG REQUIRED)
 
 # Debug output - print all variables set by ROOT: https://gist.github.com/drautb/5922368
 # get_cmake_property(_variableNames VARIABLES)
@@ -19,7 +19,7 @@ find_package(ROOT 6.20 CONFIG REQUIRED)
 #   endif()
 # endforeach()
 
-# Obtain ROOT CXX standard from ROOT_CXX_STANDARD variable
+# Obtain ROOT C++ standard from ROOT_CXX_STANDARD variable
 string(REGEX MATCH "-std=c\\+\\+([0-9]+)" ROOT_CXX_STANDARD "${ROOT_CXX_FLAGS}")
 set(ROOT_CXX_STANDARD "${CMAKE_MATCH_1}")
 message(STATUS "Found ROOT CXX standard: ${ROOT_CXX_STANDARD}")
@@ -44,7 +44,6 @@ message(STATUS "Found LinkDef file: ${LINKDEFH}")
 
 # Exclude Linkdef from other headers
 list(REMOVE_ITEM HEADERS ${LINKDEFH})
-message(STATUS "List of header files only: ${HEADERS}")
 
 # TARGET: generate the dictionary (extra C++ file containing custom ROOT methods)
 set(DICTIONARY_TARGET ${PROJECT_NAME})
@@ -65,9 +64,20 @@ message(STATUS "Found list of source files: ${SOURCES}")
 
 # Compose list of ROOT libraries with "ROOT::" prefix - need to link them to the shared library
 # Append required ROOT libs to the list
-set(LIB_NAMES "")
-list(APPEND LIB_NAMES "ROOT::Core")
-list(APPEND LIB_NAMES "ROOT::Gpad")
+  set(LIB_NAMES "")
+  FOREACH(X IN LISTS ROOT_LIBRARIES)
+    get_filename_component(FILENAME ${X} NAME)
+    string(REGEX REPLACE "lib([a-zA-Z0-9]+).so" "ROOT::\\1" FILENAME2 ${FILENAME})
+    list(APPEND LIB_NAMES "${FILENAME2}")
+  ENDFOREACH()
+
+# Manually append extra ROOT libraries
+  list(APPEND LIB_NAMES "ROOT::Gui")
+  list(APPEND LIB_NAMES "ROOT::RooFit")
+  list(APPEND LIB_NAMES "ROOT::RooFitCore")
+  list(APPEND LIB_NAMES "ROOT::Html")
+  list(APPEND LIB_NAMES "ROOT::Minuit")
+  list(APPEND LIB_NAMES "ROOT::Fumili")
 
 # TARGET: create shared library
 set(SHARED_LIB_TARGET ${PROJECT_NAME}-so)
@@ -95,8 +105,8 @@ target_link_libraries(${SHARED_LIB_TARGET} PUBLIC ${LIB_NAMES})
 message(STATUS "Created shared library target.")
 
 # TARGET: executable name is same as target name here
-# File containing the main() cpp function
-set(MAIN_CPP "${PROJECT_SOURCE_DIR}/src/canvasHelperDemo.cpp")
+# Entry point - file containing the main() cpp function
+set(MAIN_CPP "${PROJECT_SOURCE_DIR}/src/main.cpp")
 
 set(EXECUTABLE_TARGET ${PROJECT_NAME}-bin)
 add_executable(${EXECUTABLE_TARGET} ${MAIN_CPP})
@@ -104,45 +114,8 @@ add_executable(${EXECUTABLE_TARGET} ${MAIN_CPP})
 # Specify CMake standard: 
 set_property(TARGET ${SHARED_LIB_TARGET} PROPERTY CXX_STANDARD ${ROOT_CXX_STANDARD})
 # Compose executable name - striup path and extension from the "main()" file
-get_filename_component(EXECUTABLE_NAME "${MAIN_CPP}" NAME_WE)
+get_filename_component(EXECUTABLE_NAME "${PROJECT_NAME}" NAME_WE)
 set_property(TARGET ${EXECUTABLE_TARGET} PROPERTY OUTPUT_NAME ${EXECUTABLE_NAME})
 
 # Set output name for the executable - trick to have library and binary with the same name 
 target_link_libraries(${EXECUTABLE_TARGET} ${SHARED_LIB_TARGET})
-
-#message(STATUS "${ROOT_BINDIR}")
-#message(STATUS "${ROOT_LIBRARY_DIR}")
-#message(STATUS "${ROOT_INCLUDE_DIRS}")
-
-# TARGET: integrate library into ROOT
-if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    set(DEST_BIN "${ROOT_BINDIR}")
-    set(DEST_LIB "${ROOT_LIBRARY_DIR}")
-    set(DEST_INC "${ROOT_INCLUDE_DIRS}")
-else()
-    set(DEST_BIN "${CMAKE_INSTALL_PREFIX}/bin")
-    set(DEST_LIB "${CMAKE_INSTALL_PREFIX}/lib")
-    set(DEST_INC "${CMAKE_INSTALL_PREFIX}/include")
-endif()
-
-message(STATUS "Installing binaries in ${DEST_BIN}")
-message(STATUS "Installing libraries in ${DEST_LIB}")
-message(STATUS "Installing headers in ${DEST_INC}")
-
-install(TARGETS ${EXECUTABLE_TARGET}
-        RUNTIME DESTINATION ${DEST_BIN})
-
-install(TARGETS ${SHARED_LIB_TARGET}
-        LIBRARY DESTINATION ${DEST_LIB}
-        PUBLIC_HEADER DESTINATION ${DEST_INC})
-
-# *.rootmap file keeps track of the library dependencies so that the library can be properly reloaded later on
-install(FILES ${PROJECT_BINARY_DIR}/lib${PROJECT_NAME}.rootmap
-       DESTINATION ${DEST_LIB})
-# *_rdict.pcm file contains data to serialize (do I/O / store and read) library classes, without having to parse headers
-install(FILES ${PROJECT_BINARY_DIR}/lib${PROJECT_NAME}_rdict.pcm
-        DESTINATION ${DEST_LIB})
-# copy canvasHelperDemo.cpp to the ${ROOTSYS}/macros - this allows for executing "root canvasHelperDemo.cpp" independent from current working directory
-# install(FILES ${MAIN_CPP}
-#        DESTINATION ./macros)
-

@@ -5,7 +5,9 @@
  *      Author: petrstepanov
  */
 
-#include "ProjectModel.h"
+#include "./ProjectModel.h"
+
+ClassImp(ProjectModel);
 
 ProjectModel::ProjectModel() {
 	minTrimChannel = 1;

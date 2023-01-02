@@ -21,6 +21,8 @@
 #include "../util/UiHelper.h"
 #include "layout/LayoutView.h"
 
+ClassImp(MyMainFrame);
+
 MyMainFrame::MyMainFrame() : TGMainFrame(gClient->GetRoot(), Constants::windowWidth, Constants::windowHeight) {
 	SetIconPixmap(Images::applicationIcon);
 	SetWindowName(Constants::applicationName);
