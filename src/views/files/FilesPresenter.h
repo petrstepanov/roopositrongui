@@ -40,7 +40,7 @@ public:
 
 private:
     Bool_t checkImportSuccessful(TH1* histogram);
-
+    std::vector<std::string> listBoxIdVector;
 };
 
 #endif /* SRC_VIEWS_FILES_FILESPRESENTER_H_ */

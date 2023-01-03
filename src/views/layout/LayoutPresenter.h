@@ -25,8 +25,11 @@ public:
     // Slots for Model signals
     void handleProjectCreated();
     void handleProjectClosed();
+    void handleModelErrorSignal(const char*);
+
 
     // Slots from the view
+    ClassDef(LayoutPresenter, 0)
 };
 
 #endif /* SRC_VIEWS_LAYOUT_LAYOUTPRESENTER_H_ */

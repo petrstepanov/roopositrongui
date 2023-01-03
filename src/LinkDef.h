@@ -10,6 +10,7 @@
 #pragma link C++ class Model+;
 #pragma link C++ class ProjectModel+;
 #pragma link C++ class Spectrum+;
+#pragma link C++ class LayoutPresenter+;
 
 // Model classes to be saved to hard drive
 

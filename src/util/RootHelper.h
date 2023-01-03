@@ -20,11 +20,13 @@ class RootHelper {
 public:
     static RootHelper* getInstance();
     Int_t getRandomInt();
+    const char* getUUID();
+    UInt_t getHash();
 
 private:
     RootHelper();
     static RootHelper* instance;
-    TRandom* random;
+    TRandom myRandom;
 };
 
 #endif /* ROOTHELPER_H */

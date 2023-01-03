@@ -33,6 +33,7 @@ TList* UiHelper::openFilesDialog(const char **filetypes) {
   TGFileInfo fileInfo;
   fileInfo.fFileTypes = filetypes;
   fileInfo.fIniDir = StrDup(dir);
+  fileInfo.fMultipleSelection = kTRUE;
   TList *filenamesList;
 
   const TGWindow *mainFrame = UiHelper::getInstance()->getMainFrame(); // For dialog centering

@@ -14,15 +14,21 @@
 #include <RooAbsPdf.h>
 #include <RooPlot.h>
 
-class Spectrum: public TNamed {
+class Spectrum : public TObject {
 public:
-  Spectrum(Int_t _id);
+  Spectrum(const char* filepath);
   virtual ~Spectrum();
 
-  Int_t id;
-  TString *filename;
-  TH1 *histogram;              // ROOT histogram
-//	TH1* cutHistogram;           // ROOT histogram, cut
+  // Override equals operator
+  bool operator==(const Spectrum& other);
+
+  const char* getFilePath();
+
+private:
+  UInt_t id;
+  TString filepath;
+  TH1* histogram;                 // ROOT histogram
+  TH1* cutHistogram;              // ROOT histogram, cut
 //	RooDataHist* dataHistogram;   // RooFit histogram
 //	Double_t integral;            // total counts
 //	Int_t numberOfBins;
@@ -31,9 +37,13 @@ public:
 //	Double_t minimumCount;        // minimum count across all bins
 //	Double_t maximumCount;        // maximum count across all bins
 //	Double_t averageBackground;
-  RooAbsPdf *model;
-  RooAbsPdf *resolutionFunction;
-  RooPlot *plot;
+//  RooAbsPdf *model;
+//  RooAbsPdf *resolutionFunction;
+  UInt_t leftBin;
+  UInt_t rightBin;
+  Double_t binWidthNs;
+  // TCanvas preview;
+  RooPlot* plot;
 
 ClassDef(Spectrum, 1)  // Event structure
 };

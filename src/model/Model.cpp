@@ -103,14 +103,25 @@ void Model::deleteSpectrum(Int_t id) {
   if (object) {
     projectModel->spectra->Remove(object);
     spectrumDeleted(id);
+
     // Signal
-    projectModel->spectra->Print("V");
-    spectraNumberChanged(projectModel->spectra->GetEntriesFast());
+    spectraNumberChanged(projectModel->spectra->GetEntries());
   }
 }
 
 void Model::addSpectrum(Spectrum *spectrum) {
+  // Check spectrum already added
+  for (TObject* o : *(projectModel->spectra)){
+    Spectrum* s = (Spectrum*) o;
+    if (*s == *spectrum){
+      modelErrorSignal("File already added to project.");
+      return;
+    }
+  }
+
+  // If spectrum is not duplicate - continue
   projectModel->spectra->Add(spectrum);
+
   // Signals
   spectrumAdded(spectrum);
   spectraNumberChanged(projectModel->spectra->GetEntriesFast());
@@ -157,8 +168,8 @@ void Model::channelsNumberSet(Int_t channels) {
   Emit("channelsNumberSet(Int_t)", channels);
 }
 
-void Model::spectraNumberChanged(Int_t spectra) {
-  Emit("spectraNumberChanged(Int_t)", spectra);
+void Model::spectraNumberChanged(Int_t spectraNumber) {
+  Emit("spectraNumberChanged(Int_t)", spectraNumber);
 }
 
 void Model::projectCreated() {
@@ -187,6 +198,10 @@ void Model::spectrumAdded(Spectrum *spectrum) {
 
 void Model::trimChannelsSet(TVector2 *vector) {
   Emit("trimChannelsSet(TVector2*)", vector);
+}
+
+void Model::modelErrorSignal(const char* message){
+  Emit("modelErrorSignal(const char*)", message);
 }
 
 //

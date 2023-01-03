@@ -44,6 +44,7 @@ public:
   Int_t getMaxTrimChannel();
 
   // Signals
+  void modelErrorSignal(const char* message); // *SIGNAL*
   void channelsNumberSet(Int_t channels); // *SIGNAL*
   void spectraNumberChanged(Int_t number); // *SIGNAL*
   void projectCreated(); // *SIGNAL*

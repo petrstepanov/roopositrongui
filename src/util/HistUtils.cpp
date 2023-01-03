@@ -19,7 +19,7 @@
 #include "../util/StringUtils.h"
 #include "../util/Debug.h"
 
-TH1* HistUtils::importTH1I(const char *filename, int uid) {
+TH1* HistUtils::importTH1I(const char *filename) {
   // Open file
   std::ifstream inFile(filename);
 
@@ -44,10 +44,11 @@ TH1* HistUtils::importTH1I(const char *filename, int uid) {
   // Realistically number of channels id 8192 - increasing by one
   channels++;
 
+  static int uid = 0;
+  uid++;
   // Create and import everything into ROOT histogram
-  TString name = TString::Format("histogram_%d", uid);
-  TString title = TString::Format("Histogram %d", uid);
-  TH1I *histogram = new TH1I(name.Data(), title.Data(), channels, 0, channels);
+  TString name = TString::Format("hist_%d", uid);
+  TH1I *histogram = new TH1I(name.Data(), filename, channels, 0, channels);
 
   // Read correspondent number of channels
   for (UInt_t i = 1; i <= channels; i++) {

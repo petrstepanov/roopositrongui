@@ -14,29 +14,38 @@
 
 #include <TGFileDialog.h>
 
-LayoutPresenter::LayoutPresenter(LayoutView* view) : AbstractPresenter<Model, LayoutView>(view) {
-	model = instantinateModel();
-	onInitModel();
+ClassImp(LayoutPresenter);
+
+LayoutPresenter::LayoutPresenter(LayoutView *view) :
+    AbstractPresenter<Model, LayoutView>(view) {
+  model = instantinateModel();
+  onInitModel();
 }
 
-LayoutPresenter::~LayoutPresenter(){}
+LayoutPresenter::~LayoutPresenter() {
+}
 
 Model* LayoutPresenter::instantinateModel() {
-	return Model::getInstance();
+  return Model::getInstance();
 }
 
 void LayoutPresenter::onInitModel() {
-    // Conect slots to <- Model signals
-    model->Connect("projectCreated()", "LayoutPresenter", this, "handleProjectCreated()");
-    model->Connect("projectClosed()", "LayoutPresenter", this, "handleProjectClosed()");
+  // Conect slots to <- Model signals
+  model->Connect("projectCreated()",              this->Class_Name(), this, "handleProjectCreated()");
+  model->Connect("projectClosed()",               this->Class_Name(), this, "handleProjectClosed()");
+  model->Connect("modelErrorSignal(const char*)", this->Class_Name(), this, "handleModelErrorSignal(const char*)");
 }
 
 // Slots for <- Model Signals
-void LayoutPresenter::handleProjectCreated(){
-	// Remove current ProjectView if any
-	view->createNewProjectView();
+void LayoutPresenter::handleProjectCreated() {
+  // Remove current ProjectView if any
+  view->createNewProjectView();
 }
 
-void LayoutPresenter::handleProjectClosed(){
-	view->removeProjectView();
+void LayoutPresenter::handleProjectClosed() {
+  view->removeProjectView();
+}
+
+void LayoutPresenter::handleModelErrorSignal(const char* message) {
+  UiHelper::getInstance()->showOkDialog(message, EMsgBoxIcon::kMBIconExclamation);
 }

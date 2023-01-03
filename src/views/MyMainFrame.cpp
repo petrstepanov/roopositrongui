@@ -23,45 +23,49 @@
 
 ClassImp(MyMainFrame);
 
-MyMainFrame::MyMainFrame() : TGMainFrame(gClient->GetRoot(), Constants::windowWidth, Constants::windowHeight) {
-	SetIconPixmap(Images::applicationIcon);
-	SetWindowName(Constants::applicationName);
-	SetCleanup(kDeepCleanup);
+MyMainFrame::MyMainFrame() :
+    TGMainFrame(gClient->GetRoot(), Constants::windowWidth,
+        Constants::windowHeight) {
+  SetIconPixmap(Images::applicationIcon);
+  SetWindowName(Constants::applicationName);
+  SetCleanup(kDeepCleanup);
 
-	// Exit this application via the Exit button or Window Manager.
-	Connect("CloseWindow()", "MyMainFrame", this, "exit()");
-    DontCallClose();
+  // Exit this application via the Exit button or Window Manager.
+  Connect("CloseWindow()", "MyMainFrame", this, "exit()");
+  DontCallClose();
 
-    // Save reverence to MyMainFrame in UiHelper (for centering of modal dialogs)
-    UiHelper::getInstance()->setMainFrame(this);
+  // Save reverence to MyMainFrame in UiHelper (for centering of modal dialogs)
+  UiHelper::getInstance()->setMainFrame(this);
 
-    // Add main child frame - LayoutView
-	SetLayoutManager(new TGVerticalLayout(this));
-	LayoutView* layoutView = new LayoutView(this);
-    AddFrame(layoutView, new TGLayoutHints(kLHintsNormal | kLHintsExpandX | kLHintsExpandY));
+  // Add main child frame - LayoutView
+  SetLayoutManager(new TGVerticalLayout(this));
+  LayoutView *layoutView = new LayoutView(this);
+  AddFrame(layoutView,
+      new TGLayoutHints(kLHintsNormal | kLHintsExpandX | kLHintsExpandY));
 
-    // Set minimum and maximum window size for window manager
-	SetWMSizeHints(Constants::windowWidth, Constants::windowHeight, 1E4, 1E4, 1, 1);
-	MapSubwindows();
-	Layout();
-	// Issue - GetDefaultSize() returns zeros on Ubuntu 18.04.
-    Resize(Constants::windowWidth, Constants::windowHeight);
-    // Maps the window "id" and all of its subwindows that have had map requests on the screen
-    // and put this window on the top of of the stack of all windows
-    MapWindow();
-    // You can hide child frames only after the frames have been laid out and the sub windows of the composite frames have been mapped
-    uiReady();
+  // Set minimum and maximum window size for window manager
+  SetWMSizeHints(Constants::windowWidth, Constants::windowHeight, 1E4, 1E4, 1,
+      1);
+  MapSubwindows();
+  Layout();
+  // Issue - GetDefaultSize() returns zeros on Ubuntu 18.04.
+  Resize(Constants::windowWidth, Constants::windowHeight);
+  // Maps the window "id" and all of its subwindows that have had map requests on the screen
+  // and put this window on the top of of the stack of all windows
+  MapWindow();
+  // You can hide child frames only after the frames have been laid out and the sub windows of the composite frames have been mapped
+  uiReady();
 }
 
-MyMainFrame::~MyMainFrame(){
-    Cleanup();
+MyMainFrame::~MyMainFrame() {
+  Cleanup();
 }
 
-void MyMainFrame::exit(){
-	// DeleteWindow();              // to stay in the ROOT session
-	gApplication->Terminate();   // to exit and close the ROOT session
+void MyMainFrame::exit() {
+  // DeleteWindow();              // to stay in the ROOT session
+  gApplication->Terminate();   // to exit and close the ROOT session
 }
 
-void MyMainFrame::uiReady(){
-	Emit("uiReady()");
+void MyMainFrame::uiReady() {
+  Emit("uiReady()");
 }

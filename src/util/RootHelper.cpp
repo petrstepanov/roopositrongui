@@ -12,20 +12,30 @@
  */
 
 #include "RootHelper.h"
+#include <TUUID.h>
 
-RootHelper::RootHelper(){
-	random = new TRandom();
+RootHelper::RootHelper() : myRandom() {
 }
 
-RootHelper* RootHelper::instance = NULL;
+RootHelper *RootHelper::instance = NULL;
 
 RootHelper* RootHelper::getInstance() {
-    if (!instance){
-        instance = new RootHelper();
-    }
-    return instance;
+  if (!instance) {
+    instance = new RootHelper();
+  }
+  return instance;
 }
 
-Int_t RootHelper::getRandomInt(){
-	return random->Rndm()*1E6;
+const char* RootHelper::getUUID() {
+  TUUID u;
+  return u.AsString();
+}
+
+UInt_t RootHelper::getHash() {
+  TUUID u;
+  return u.Hash();
+}
+
+Int_t RootHelper::getRandomInt() {
+  return myRandom.Rndm() * 1E6;
 }
