@@ -9,10 +9,10 @@
 #include "PlotsPresenter.h"
 
 #include "../../util/UiHelper.h"
-#include <TGTab.h>
 #include <TRootEmbeddedCanvas.h>
 #include <TGDoubleSlider.h>
 #include <TGButton.h>
+//#include <TGCompositeFrame.h>
 
 PlotsView::PlotsView(const TGWindow *w) : AbstractView<PlotsPresenter>(w){
 	// Build UI
@@ -23,7 +23,9 @@ PlotsView::PlotsView(const TGWindow *w) : AbstractView<PlotsPresenter>(w){
 	connectSlots();
 }
 
-PlotsView::~PlotsView(){};
+PlotsView::~PlotsView(){
+	delete plotTabs;
+};
 
 PlotsPresenter* PlotsView::instantinatePresenter(){
     return new PlotsPresenter(this);
@@ -33,13 +35,7 @@ void PlotsView::initUI(){
 	SetLayoutManager(new TGVerticalLayout(this));
 
 	// Layout UI elements and attach signals
-    TGTab* plotTabs = new TGTab(this);
-
-    // Import spectrum tab
-    TGCompositeFrame *tabImport = plotTabs->AddTab("temp-spectrum.Spe");
-    TRootEmbeddedCanvas* embeddedCanvas = new TRootEmbeddedCanvas("canvas_temp-spectrum.Spe", tabImport);
-    tabImport ->AddFrame(embeddedCanvas, new TGLayoutHints(kLHintsNormal | kLHintsExpandX | kLHintsExpandY, Padding::dx, Padding::dx, Padding::dy*2, Padding::dy*2));
-
+    plotTabs = new TGTab(this);
     AddFrame(plotTabs, new TGLayoutHints(kLHintsNormal | kLHintsExpandX | kLHintsExpandY, 0, 0, 0, Padding::dy));
 
     // Add bottom slider
@@ -59,4 +55,11 @@ void PlotsView::initUI(){
 
 void PlotsView::connectSlots(){
 	// button->Connect("Clicked()", "__View", presenter, "onButtonClicked()");
+}
+
+void PlotsView::addSpectrum(Spectrum* s){
+    // Import spectrum tab
+    TGCompositeFrame *tab = plotTabs->AddTab(s->GetName());
+    TRootEmbeddedCanvas* embeddedCanvas = new TRootEmbeddedCanvas(s->getFilePath(), tab);
+    tab ->AddFrame(embeddedCanvas, new TGLayoutHints(kLHintsNormal | kLHintsExpandX | kLHintsExpandY, Padding::dx, Padding::dx, Padding::dy*2, Padding::dy*2));
 }

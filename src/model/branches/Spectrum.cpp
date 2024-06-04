@@ -20,6 +20,11 @@ Spectrum::Spectrum(const char* filepath) : TObject() {
 
   // Import histogram
   histogram = HistUtils::importTH1I(filepath);
+  cutHistogram=histogram;
+
+  binWidthNs = 0;
+  leftBin=1;
+  rightBin=histogram->GetNbinsX();
 
   plot = nullptr;
 }

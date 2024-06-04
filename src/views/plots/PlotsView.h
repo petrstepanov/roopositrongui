@@ -10,6 +10,8 @@
 
 #include "./../AbstractView.h"
 #include "PlotsPresenter.h"
+#include "../../model/branches/Spectrum.h"
+#include <TGTab.h>
 
 class PlotsPresenter;
 
@@ -19,11 +21,13 @@ class PlotsView : public AbstractView<PlotsPresenter> {
     void connectSlots();
 
   private:
-	// Declare UI elements
+    TGTab* plotTabs;
 
   public:
     PlotsView(const TGWindow *w = 0);
     virtual ~PlotsView();
+
+    void addSpectrum(Spectrum*);
 
     // Override base class virtual functions
     PlotsPresenter* instantinatePresenter();

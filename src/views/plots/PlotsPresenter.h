@@ -21,8 +21,10 @@ public:
     // Override base class virtual methods
     Model* instantinateModel();
 
+
     // Signals from model
     void onInitModel();
+    void handleSpectrumAdded(Spectrum *);
 
     // Slots from the view
 };
